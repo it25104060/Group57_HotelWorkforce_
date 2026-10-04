@@ -11,7 +11,7 @@ public class Attendance {
     private String status;
 
     public Attendance() {}
-
+// Constructor to initialize all attendance details
     public Attendance(int attendanceId, int employeeId, String employeeName, String date, String clockInTime, String clockOutTime, Double workHours, String status) {
         this.attendanceId = attendanceId;
         this.employeeId = employeeId;
@@ -22,7 +22,7 @@ public class Attendance {
         this.workHours = workHours;
         this.status = status;
     }
-
+// Get and set attendance ID
     public int getAttendanceId() { return attendanceId; }
     public void setAttendanceId(int attendanceId) { this.attendanceId = attendanceId; }
 
