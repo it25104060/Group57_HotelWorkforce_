@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="auth-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance & Time Tracking - Hotel Workforce Pro</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    <style>
+        :root {
+            --bg-main: #f5f2eb;
+            --sidebar-bg: #1e242d;
+            --sidebar-text: #9aa3b0;
+            --sidebar-hover: #29303d;
+            --gold-primary: #d29b28;
+            --gold-light: #fef8eb;
+            --gold-border: #f2e2be;
+            --text-dark: #1b2128;
+            --text-muted: #6b7280;
+            --card-bg: #ffffff;
+            --border-color: #ebe5d8;
+            --green-badge-bg: #e3ede3;
+            --green-badge-text: #2c6e3b;
+            --amber-badge-bg: #fbf3d8;
+            --amber-badge-text: #8e6210;
+            --gray-badge-bg: #eef0f2;
+            --gray-badge-text: #596573;
+            --red-badge-bg: #fae8e8;
+            --red-badge-text: #a82a2a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .brand-header {
+            padding: 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-box {
+            background-color: var(--gold-primary);
+            color: #fff;
+            font-weight: 800;
+            font-size: 18px;
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-title {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 1.2;
+        }
+
+        .brand-subtitle {
+            color: #8c97a8;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            padding: 10px 0;
+        }
+
+        .section-label {
+            color: #556070;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 24px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 24px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background-color: var(--sidebar-hover);
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background-color: rgba(210, 155, 40, 0.12);
+            color: var(--gold-primary);
+            border-left: 4px solid var(--gold-primary);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-left i {
+            width: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .nav-tag {
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #79879c;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid #2b3342;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #384252;
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            color: var(--sidebar-text);
+            font-size: 13px;
+        }
+
+        .main-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .top-navbar {
+            height: 64px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: transparent;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #737b88;
+        }
+
+        .breadcrumb span {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #4b5563;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .top-user-profile-container {
+            position: relative;
+        }
+
+        .top-user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .top-user-profile:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 210px;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            padding: 6px 0;
+            z-index: 1000;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .dropdown-item.logout {
+            color: #dc2626;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 6px 0;
+        }
+
+        .content-container {
+            padding: 10px 40px 40px;
+        }
+
+        .page-subtitle {
+            color: var(--gold-primary);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 8px;
+        }
+
+        .page-title {
+            font-size: 34px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+        }
+
+        .page-description {
+            color: #647082;
+            font-size: 15px;
+            margin-bottom: 28px;
+        }
+
+        .btn-record-attendance {
+            background-color: var(--gold-primary);
+            color: #ffffff;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(210, 155, 40, 0.25);
+            transition: opacity 0.2s;
+        }
+
+        .btn-record-attendance:hover {
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #727a87;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+
+        .stat-desc {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .stat-icon-wrapper {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            background-color: #fbf6ea;
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            border: 1px solid var(--gold-border);
+        }
+
+        .panel-box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .panel-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .panel-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .action-header-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-table-action {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-table-action:hover {
+            background-color: #f8fafc;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background-color: #faf8f5;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--gold-primary);
+            background-color: #fff;
+        }
+
+        .filter-group {
+            display: flex;
+            background-color: #f1f3f5;
+            padding: 3px;
+            border-radius: 8px;
+        }
+
+        .filter-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #4b5563;
+        }
+
+        .filter-btn.active {
+            background: #ffffff;
+            color: var(--text-dark);
+            font-weight: 600;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #7b8493;
+            text-align: left;
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0ece1;
+            background-color: #faf8f3;
+        }
+
+        .data-table td {
+            padding: 18px 16px;
+            border-bottom: 1px solid #f5f2eb;
+            vertical-align: middle;
+            font-size: 15px;
+        }
+
+        .staff-cell {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .staff-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: #f6ebd2;
+            color: #a07212;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .staff-details .name {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 15px;
+        }
+
+        .staff-details .staff-id {
+            font-size: 13px;
+            color: #9098a6;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .time-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-present {
+            background-color: var(--green-badge-bg);
+            color: var(--green-badge-text);
+        }
+
+        .badge-late {
+            background-color: var(--amber-badge-bg);
+            color: var(--amber-badge-text);
+        }
+
+        .badge-leave {
+            background-color: var(--gray-badge-bg);
+            color: var(--gray-badge-text);
+        }
+
+        .badge-absent {
+            background-color: var(--red-badge-bg);
+            color: var(--red-badge-text);
+        }
+
+        .badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: currentColor;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 16px;
+        }
+
+        .action-icon {
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.2s;
+        }
+
+        .action-icon:hover {
+            color: var(--text-dark);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 28px;
+            border-radius: 12px;
+            width: 480px;
+            max-width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .modal-subtext {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--gold-primary);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .btn-cancel {
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-confirm {
+            background: var(--gold-primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div>
+        <div class="brand-header">
+            <div class="logo-box">GP</div>
+            <div>
+                <div class="brand-title">Hotel Workforce Pro</div>
+                <div class="brand-subtitle">GOLDEN PALM HOTEL</div>
+            </div>
+        </div>
+        <div class="nav-section">
+            <div class="section-label">WORKSPACE</div>
+            <a href="index.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-border-all"></i> Dashboard</div>
+            </a>
+            <a href="user-access-administration.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-shield-halved"></i> User Access & Administration</div>
+                <span class="nav-tag">M1</span>
+            </a>
+            <a href="employee-profiles.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-user-group"></i> Employee Profiles</div>
+                <span class="nav-tag">M2</span>
+            </a>
+            <a href="attendance-time-tracking.html" class="nav-item active">
+                <div class="nav-left"><i class="fa-solid fa-calendar-days"></i> Attendance & Time Tracking</div>
+                <span class="nav-tag">M3</span>
+            </a>
+            <a href="leave-management.html" class="nav-item">
+                <div class="nav-left"><i class="fa-regular fa-clipboard"></i> Leave Management</div>
+                <span class="nav-tag">M4</span>
+            </a>
+            <a href="payroll-payslip-processing.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-file-invoice-dollar"></i> Payroll & Payslip Processing</div>
+                <span class="nav-tag">M5</span>
+            </a>
+            <a href="performance-management.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-clipboard-check"></i> Performance Management</div>
+                <span class="nav-tag">M6</span>
+            </a>
+            <a href="reporting-analytics.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-chart-line"></i> Reporting & Analytics</div>
+                <span class="nav-tag">M7</span>
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="section-label">PERSONAL</div>
+            <a href="my-profile.html" class="nav-item">
+                <div class="nav-left"><i class="fa-regular fa-user"></i> My Profile</div>
+            </a>
+            <a href="account-security.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-lock"></i> Account Security</div>
+            </a>
+        </div>
+    </div>
+    <div class="sidebar-footer">
+        <div class="avatar">DJ</div>
+        <div class="user-info">
+            <div class="user-name">Dilhani Jayasinghe</div>
+            <div class="user-role">System Admin</div>
+        </div>
+    </div>
+</aside>
+
+<main class="main-wrapper">
+    <header class="top-navbar">
+        <div class="breadcrumb">
+            Golden Palm / <span>Attendance & Time Tracking</span>
+        </div>
+        <div class="top-actions">
+            <button class="notification-btn" onclick="alert('No new notifications')">
+                <i class="fa-regular fa-bell"></i>
+            </button>
+            <div class="top-user-profile-container">
+                <div class="top-user-profile" onclick="toggleProfileDropdown(event)">
+                    <div style="text-align: right;">
+                        <div style="font-size: 15px; font-weight: 600;">Dilhani Jayasinghe</div>
+                        <div style="font-size: 13px; color: var(--text-muted);">System Admin</div>
+                    </div>
+                    <div class="avatar" style="background-color: #e2e8f0; color: #475569;">DJ</div>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 12px; color: #94a3b8;"></i>
+                </div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <a href="my-profile.html" class="dropdown-item">
+                        <i class="fa-regular fa-user"></i> My Profile
+                    </a>
+                    <a href="account-security.html" class="dropdown-item">
+                        <i class="fa-solid fa-lock"></i> Account Settings
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item logout" onclick="handleLogout(event)">
+                        <i class="fa-solid fa-right-from-bracket"></i> Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="content-container">
+        <div class="page-subtitle">MODULE 3 - DAILY OPERATIONS</div>
+
+        <div class="header-row">
+            <h1 class="page-title">Attendance & Time Tracking</h1>
+            <button class="btn-record-attendance" onclick="openRecordModal()">
+                <i class="fa-solid fa-plus"></i> Record attendance
+            </button>
+        </div>
+
+        <p class="page-description">Review the selected day's time log, spot exceptions and keep shift records accurate.</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">PRESENT TODAY</div>
+                <div class="stat-value" id="presentCount">0</div>
+                <div class="stat-desc" style="color: #2c6e3b;">Active logs today</div>
+                <div class="stat-icon-wrapper"><i class="fa-regular fa-circle-check"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">LATE ARRIVALS</div>
+                <div class="stat-value" id="lateCount">0</div>
+                <div class="stat-desc" style="color: #8e6210;">Requires review</div>
+                <div class="stat-icon-wrapper"><i class="fa-regular fa-clock"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">ON LEAVE</div>
+                <div class="stat-value" id="leaveCount">0</div>
+                <div class="stat-desc" style="color: #596573;">Approved leave today</div>
+                <div class="stat-icon-wrapper"><i class="fa-regular fa-clipboard"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">ABSENT</div>
+                <div class="stat-value" id="absentCount">0</div>
+                <div class="stat-desc" style="color: #a82a2a;">Needs follow-up</div>
+                <div class="stat-icon-wrapper"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            </div>
+        </div>
+
+        <div class="panel-box">
+            <div class="panel-header-row">
+                <div>
+                    <div class="panel-title">Selected day · Time log</div>
+                    <div class="panel-sub" id="currentDateSub">Today's Attendance</div>
+                </div>
+                <div class="action-header-btns">
+                    <button class="btn-table-action" onclick="refreshTable()">
+                        <i class="fa-solid fa-rotate"></i> Refresh
+                    </button>
+                    <button class="btn-table-action" onclick="exportData()">
+                        <i class="fa-solid fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search staff member or department" onkeyup="applyFilter()">
+                </div>
+                <div class="filter-group">
+                    <button class="filter-btn active" id="filter-all" onclick="setFilter('All')">All</button>
+                    <button class="filter-btn" id="filter-present" onclick="setFilter('Present')">Present</button>
+                    <button class="filter-btn" id="filter-late" onclick="setFilter('Late')">Late</button>
+                    <button class="filter-btn" id="filter-leave" onclick="setFilter('On Leave')">On Leave</button>
+                    <button class="filter-btn" id="filter-absent" onclick="setFilter('Absent')">Absent</button>
+                </div>
+            </div>
+
+            <table class="data-table" id="attendanceTable">
+                <thead>
+                <tr>
+                    <th>STAFF MEMBER</th>
+                    <th>DEPARTMENT</th>
+                    <th>SHIFT</th>
+                    <th>CLOCK IN</th>
+                    <th>CLOCK OUT</th>
+                    <th>HOURS</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Rows load dynamically from database via loadAttendanceData() -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<div class="modal" id="attendanceModal">
+    <div class="modal-content">
+        <div class="modal-header" id="modalTitle">Record Attendance</div>
+        <div class="modal-subtext" id="modalSubtext">Enter shift clock-in and clock-out details.</div>
+
+        <div id="modalForm">
+            <input type="hidden" id="editingAttendanceId" value="">
+
+            <div class="form-group">
+                <label>Staff Member</label>
+                <select id="staffSelect" class="form-control">
+                    <!-- Loaded dynamically from /api/employees -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <select id="staffDept" class="form-control">
+                    <option value="Front Office">Front Office</option>
+                    <option value="Food & Beverage">Food & Beverage</option>
+                    <option value="Housekeeping">Housekeeping</option>
+                    <option value="HR & Admin">HR & Admin</option>
+                    <option value="Finance">Finance</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Shift</label>
+                <input type="text" id="staffShift" class="form-control" placeholder="e.g. Morning / Night / Split / Office">
+            </div>
+            <div class="form-group" style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label>Clock In</label>
+                    <input type="time" id="clockIn" class="form-control">
+                </div>
+                <div style="flex: 1;">
+                    <label>Clock Out</label>
+                    <input type="time" id="clockOut" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="attendanceStatus" class="form-control">
+                    <option value="Present">Present</option>
+                    <option value="Late">Late</option>
+                    <option value="On Leave">On Leave</option>
+                    <option value="Absent">Absent</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-confirm" onclick="saveAttendance()">Save Record</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let activeFilter = 'All';
+    let employeeList = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+        loadEmployees();
+        loadAttendanceData();
+    });
+
+    async function loadEmployees() {
+        try {
+            const response = await fetch('/api/employees');
+            if (response.ok) {
+                employeeList = await response.json();
+                const select = document.getElementById('staffSelect');
+                select.innerHTML = '';
+                employeeList.forEach(emp => {
+                    const opt = document.createElement('option');
+                    opt.value = emp.employeeId;
+                    opt.textContent = `${emp.fullName} (EMP-${emp.employeeCode || emp.employeeId})`;
+                    select.appendChild(opt);
+                });
+            }
+        } catch (err) {
+            console.error("Error loading employees for dropdown:", err);
+        }
+    }
+
+    async function loadAttendanceData() {
+        try {
+            const response = await fetch('/api/attendance');
+            if (!response.ok) throw new Error("Failed to fetch database logs");
+
+            const records = await response.json();
+            const tableBody = document.querySelector("#attendanceTable tbody");
+            if (!tableBody) return;
+
+            tableBody.innerHTML = "";
+
+            if (records.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color: var(--text-muted); padding: 20px;">No attendance records found in database.</td></tr>`;
+                recalculateMetrics([]);
+                return;
+            }
+
+            records.forEach(att => {
+                const clockIn = att.clockInTime ? att.clockInTime.substring(0, 5) : '—';
+                const clockOut = att.clockOutTime ? att.clockOutTime.substring(0, 5) : '—';
+                const workHrsDisplay = att.workHours ? (att.workHours.toFixed(1) + 'h') : '—';
+                const statusStr = att.status || 'Present';
+                const badgeClass = getBadgeClass(statusStr);
+                const initials = getInitials(att.employeeName || 'Staff');
+                const empId = att.employeeId ? `AT-0826-${att.employeeId}` : 'AT-0826-00';
+
+                const tr = document.createElement("tr");
+                tr.setAttribute("data-status", statusStr);
+                tr.setAttribute("data-id", att.attendanceId);
+                tr.setAttribute("data-empid", att.employeeId);
+                tr.setAttribute("data-cin", att.clockInTime || '');
+                tr.setAttribute("data-cout", att.clockOutTime || '');
+                tr.setAttribute("data-workhours", att.workHours || 0);
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="staff-cell">
+                            <div class="staff-avatar">${initials}</div>
+                            <div class="staff-details">
+                                <div class="name">${att.employeeName || 'Unknown'}</div>
+                                <div class="staff-id">${empId}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${att.department || 'Front Office'}</td>
+                    <td>${att.shift || 'Morning'}</td>
+                    <td class="time-text">${clockIn}</td>
+                    <td class="time-text">${clockOut}</td>
+                    <td class="time-text">${workHrsDisplay}</td>
+                    <td><span class="badge ${badgeClass}">${statusStr}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <i class="fa-regular fa-pen-to-square action-icon" onclick="editRow(this)"></i>
+                            <i class="fa-regular fa-trash-can action-icon" onclick="deleteRow(this)"></i>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            recalculateMetrics(records);
+            applyFilter();
+        } catch (err) {
+            console.error("Error populating attendance table:", err);
+        }
+    }
+
+    function recalculateMetrics(records) {
+        let present = 0, late = 0, leave = 0, absent = 0;
+        records.forEach(r => {
+            const st = r.status || 'Present';
+            if (st === 'Present') present++;
+            else if (st === 'Late') late++;
+            else if (st === 'On Leave') leave++;
+            else if (st === 'Absent') absent++;
+        });
+        document.getElementById('presentCount').innerText = present;
+        document.getElementById('lateCount').innerText = late;
+        document.getElementById('leaveCount').innerText = leave;
+        document.getElementById('absentCount').innerText = absent;
+    }
+
+    function toggleProfileDropdown(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.toggle('show');
+    }
+
+    window.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('profileDropdown');
+        if (dropdown && dropdown.classList.contains('show')) {
+            dropdown.classList.remove('show');
+        }
+    });
+
+    function handleLogout(event) {
+        event.preventDefault();
+        if (confirm('Are you sure you want to log out?')) {
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
+    }
+
+    function openRecordModal() {
+        document.getElementById('editingAttendanceId').value = "";
+        document.getElementById('modalTitle').innerText = "Record Attendance";
+        document.getElementById('staffShift').value = "";
+        document.getElementById('clockIn').value = "";
+        document.getElementById('clockOut').value = "";
+        document.getElementById('attendanceStatus').value = "Present";
+        document.getElementById('attendanceModal').style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById('attendanceModal').style.display = "none";
+    }
+
+    function getInitials(name) {
+        if (!name) return "ST";
+        return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+    }
+
+    function getBadgeClass(status) {
+        switch (status) {
+            case 'Present': return 'badge-present';
+            case 'Late': return 'badge-late';
+            case 'On Leave': return 'badge-leave';
+            case 'Absent': return 'badge-absent';
+            default: return 'badge-present';
+        }
+    }
+
+    function calculateNumHours(cin, cout) {
+        if (!cin || !cout) return 0.0;
+        const [h1, m1] = cin.split(':').map(Number);
+        const [h2, m2] = cout.split(':').map(Number);
+        let diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+        if (diff < 0) diff += 24 * 60;
+        return (diff / 60.0);
+    }
+
+    async function saveAttendance() {
+        const attendanceId = document.getElementById('editingAttendanceId').value;
+        const employeeId = document.getElementById('staffSelect').value;
+        const cin = document.getElementById('clockIn').value;
+        const cout = document.getElementById('clockOut').value;
+        const status = document.getElementById('attendanceStatus').value;
+
+        if (!employeeId) {
+            alert('Please select a staff member.');
+            return;
+        }
+
+        const workHours = calculateNumHours(cin, cout);
+
+        const payload = {
+            employeeId: parseInt(employeeId),
+            clockInTime: cin ? (cin.length === 5 ? cin + ':00' : cin) : null,
+            clockOutTime: cout ? (cout.length === 5 ? cout + ':00' : cout) : null,
+            workHours: workHours,
+            status: status
+        };
+
+        const method = attendanceId ? 'PUT' : 'POST';
+        const url = attendanceId ? `/api/attendance/${attendanceId}` : '/api/attendance';
+
+        try {
+            const res = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error(errText || 'Failed to save attendance log');
+            }
+
+            closeModal();
+            loadAttendanceData(); // Reload fresh state directly from SQL Server
+        } catch (err) {
+            alert("Database Error: " + err.message);
+        }
+    }
+
+    function editRow(icon) {
+        const row = icon.closest('tr');
+        const attendanceId = row.getAttribute('data-id');
+        const empId = row.getAttribute('data-empid');
+        const cin = row.getAttribute('data-cin');
+        const cout = row.getAttribute('data-cout');
+        const status = row.getAttribute('data-status');
+
+        document.getElementById('editingAttendanceId').value = attendanceId;
+        document.getElementById('modalTitle').innerText = "Edit Attendance Record";
+        document.getElementById('staffSelect').value = empId;
+        document.getElementById('clockIn').value = cin ? cin.substring(0, 5) : '';
+        document.getElementById('clockOut').value = cout ? cout.substring(0, 5) : '';
+        document.getElementById('attendanceStatus').value = status;
+
+        document.getElementById('attendanceModal').style.display = "flex";
+    }
+
+    async function deleteRow(icon) {
+        const row = icon.closest('tr');
+        const attendanceId = row.getAttribute('data-id');
+
+        if (confirm('Are you sure you want to delete this attendance record?')) {
+            try {
+                const res = await fetch(`/api/attendance/${attendanceId}`, { method: 'DELETE' });
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(errText || 'Delete failed');
+                }
+                loadAttendanceData(); // Refresh list from SQL Server
+            } catch (err) {
+                alert("Error deleting record from SQL Server:\n" + err.message);
+            }
+        }
+    }
+
+    function setFilter(status) {
+        activeFilter = status;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+
+        const filterIdMap = {
+            'All': 'filter-all',
+            'Present': 'filter-present',
+            'Late': 'filter-late',
+            'On Leave': 'filter-leave',
+            'Absent': 'filter-absent'
+        };
+        document.getElementById(filterIdMap[status]).classList.add('active');
+        applyFilter();
+    }
+
+    function applyFilter() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#attendanceTable tbody tr');
+
+        rows.forEach(row => {
+            const rowStatus = row.getAttribute('data-status');
+            const nameEl = row.querySelector('.name');
+            if (!nameEl) return;
+
+            const name = nameEl.innerText.toLowerCase();
+            const dept = row.children[1].innerText.toLowerCase();
+
+            const matchesSearch = name.includes(query) || dept.includes(query);
+            const matchesStatus = (activeFilter === 'All') || (rowStatus === activeFilter);
+
+            if (matchesSearch && matchesStatus) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function refreshTable() {
+        document.getElementById('searchInput').value = '';
+        setFilter('All');
+        loadAttendanceData();
+    }
+
+    function exportData() {
+        alert('Exporting current table data to CSV file...');
+    }
+</script>
+</body>
+</html>
