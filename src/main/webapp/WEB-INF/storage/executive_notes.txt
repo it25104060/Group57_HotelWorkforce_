@@ -1,0 +1,2 @@
+# id|reportId|title|noteText|priority|author|createdAt|updatedAt
+1|1|Review absenteeism trend|Absence levels should be compared with the previous month during the management meeting.|HIGH|Director|2026-09-14T08:05:00|2026-09-14T08:05:00

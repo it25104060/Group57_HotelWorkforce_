@@ -1,0 +1,35 @@
+<%@ page import="com.hotelworkforce.executive.model.AnalyticsSummary" %>
+<%@ page import="java.text.DecimalFormat" %>
+<%
+AnalyticsSummary summary = (AnalyticsSummary) request.getAttribute("summary");
+DecimalFormat moneyFmt = new DecimalFormat("#,##0.00");
+%>
+<div class="metric-grid stagger-grid">
+    <article class="metric-card"><div class="metric-icon">&#128101;</div><div><span>Active Headcount</span><strong><%= summary.getHeadcount() %></strong><small>Employees in selected scope</small></div></article>
+    <article class="metric-card"><div class="metric-icon">&#10003;</div><div><span>Attendance Rate</span><strong><%= String.format("%.1f%%", summary.getAttendanceRate()) %></strong><small><%=summary.getAbsenceCount()%> absence records · <%=summary.getLateCount()%> late</small></div></article>
+    <article class="metric-card"><div class="metric-icon">&#9719;</div><div><span>Approved Leave</span><strong><%= String.format("%.1f", summary.getApprovedLeaveDays()) %></strong><small><%=summary.getApprovedLeaveCount()%> requests / days</small></div></article>
+    <article class="metric-card"><div class="metric-icon">LKR</div><div><span>Payroll Expenditure</span><strong class="money">Rs. <%= moneyFmt.format(summary.getPayrollExpenditure()) %></strong><small>OT Rs. <%= moneyFmt.format(summary.getOvertimeCost()) %> · deductions Rs. <%= moneyFmt.format(summary.getDeductions()) %></small></div></article>
+</div>
+
+<div class="chart-grid">
+    <article class="panel chart-panel reveal-card">
+        <div class="panel-head"><div><span class="section-kicker">Workforce</span><h3>Headcount by Department</h3></div><span class="panel-badge">Live</span></div>
+        <canvas class="executive-chart" data-chart="bar" data-source="headcountData" aria-label="Headcount by department chart"></canvas>
+    </article>
+    <article class="panel chart-panel reveal-card">
+        <div class="panel-head"><div><span class="section-kicker">Time & Attendance</span><h3>Attendance Trend</h3></div><span class="panel-badge">%</span></div>
+        <canvas class="executive-chart" data-chart="line" data-source="attendanceData" aria-label="Attendance trend chart"></canvas>
+    </article>
+    <article class="panel chart-panel reveal-card">
+        <div class="panel-head"><div><span class="section-kicker">Leave</span><h3>Leave Pattern by Type</h3></div><span class="panel-badge">Days</span></div>
+        <canvas class="executive-chart" data-chart="donut" data-source="leaveData" aria-label="Leave by type chart"></canvas>
+    </article>
+    <article class="panel chart-panel reveal-card">
+        <div class="panel-head"><div><span class="section-kicker">Finance</span><h3>Payroll Expenditure Trend</h3></div><span class="panel-badge">LKR</span></div>
+        <canvas class="executive-chart" data-chart="area" data-source="payrollData" aria-label="Payroll expenditure trend chart"></canvas>
+    </article>
+</div>
+<script type="application/json" id="headcountData"><%= request.getAttribute("headcountJson") %></script>
+<script type="application/json" id="attendanceData"><%= request.getAttribute("attendanceJson") %></script>
+<script type="application/json" id="leaveData"><%= request.getAttribute("leaveJson") %></script>
+<script type="application/json" id="payrollData"><%= request.getAttribute("payrollJson") %></script>

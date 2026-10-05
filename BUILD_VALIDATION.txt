@@ -1,0 +1,29 @@
+Hotel Workforce - Reporting & Executive Analytics
+TXT-Storage Build Revision
+
+Validation summary:
+- Database classes removed.
+- SQL/H2 schema and sample folders removed.
+- Microsoft SQL Server and H2 Maven dependencies removed.
+- Dashboard analytics now read from TXT files.
+- Saved report CRUD writes to report_definitions.txt.
+- Executive note CRUD writes to executive_notes.txt.
+- Source analytics data is stored in employees.txt, attendance_records.txt, leave_requests.txt and payroll_records.txt.
+- Tomcat 10 Jakarta Servlet structure retained.
+- PDF and CSV exports retained.
+- Requested green theme, animations and responsive styling retained.
+
+Runtime storage path under normal Tomcat deployment:
+WEB-INF/storage/
+
+Tomcat should use unpackWARs=true so these TXT files are writable.
+
+Local validation performed in the build environment:
+- Core model/config/DAO Java sources compiled successfully with javac.
+- TXT analytics loaded successfully from a temporary copy of the storage folder.
+- Validated headcount: 12 sample active employees.
+- Validated payroll aggregation returned a positive total.
+- Report Create/Read/Update/Delete test passed.
+- Executive Note Create/Read/Delete test passed.
+- Report deletion correctly detaches linked executive notes.
+- Maven executable is not installed in this build environment, so a Maven WAR build was not run here.

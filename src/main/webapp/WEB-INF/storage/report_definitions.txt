@@ -1,0 +1,2 @@
+# id|name|description|reportType|department|roleFilter|dateFrom|dateTo|status|createdBy|createdAt|updatedAt
+1|Monthly Workforce Overview|Executive monthly view of staffing, attendance, approved leave and payroll expenditure.|WORKFORCE|||2026-08-14|2026-09-14|ACTIVE|Director|2026-09-14T08:00:00|2026-09-14T08:00:00

@@ -1,0 +1,13 @@
+# id|name|department|role|active
+1|Nuwan Perera|Human Resources|HR Manager|1
+2|Sachini Wickramasuriya|Front Office|Reception Supervisor|1
+3|Tharindu Senanayake|Operations|Department Manager|1
+4|Kasun Jayawardena|Finance|Finance Manager|1
+5|Ramesh Gunasekara|Executive|Director|1
+6|Amali Fernando|Housekeeping|Room Attendant|1
+7|Dinuka Silva|Food & Beverage|Waiter|1
+8|Nimali Peris|Front Office|Receptionist|1
+9|Sahan Dias|Housekeeping|Supervisor|1
+10|Ishara Fernando|Food & Beverage|Chef|1
+11|Piumi Senanayake|Finance|Accounts Executive|1
+12|Kevin Rodrigo|Operations|Maintenance Officer|1
