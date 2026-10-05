@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="auth-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Management - Hotel Workforce Pro</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+    <style>
+        :root {
+            --bg-main: #f5f2eb;
+            --sidebar-bg: #1e242d;
+            --sidebar-text: #9aa3b0;
+            --sidebar-hover: #29303d;
+            --gold-primary: #c68a23;
+            --gold-hover: #b27a1e;
+            --gold-light: #fbf6ea;
+            --gold-border: #f2e2be;
+            --text-dark: #1b2128;
+            --text-muted: #6b7280;
+            --card-bg: #ffffff;
+            --border-color: #ebe5d8;
+            --input-bg: #f7f5ef;
+            --danger-color: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .brand-header {
+            padding: 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-box {
+            background-color: var(--gold-primary);
+            color: #fff;
+            font-weight: 800;
+            font-size: 18px;
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-title {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 1.2;
+        }
+
+        .brand-subtitle {
+            color: #8c97a8;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            padding: 10px 0;
+        }
+
+        .section-label {
+            color: #556070;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 24px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 24px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background-color: var(--sidebar-hover);
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background-color: rgba(198, 138, 35, 0.15);
+            color: var(--gold-primary);
+            border-left: 4px solid var(--gold-primary);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-left i {
+            width: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .nav-tag {
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #79879c;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid #2b3342;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .sidebar-footer:hover {
+            background: #252d38;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #384252;
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            color: var(--sidebar-text);
+            font-size: 13px;
+        }
+
+        /* Main Workspace Layout */
+        .main-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .top-navbar {
+            height: 64px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #737b88;
+        }
+
+        .breadcrumb span {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #4b5563;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .notification-btn:hover {
+            color: var(--text-dark);
+        }
+
+        .top-user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .top-user-profile:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        /* Profile Dropdown Menu */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            width: 220px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            z-index: 500;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--input-bg);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        /* Content Container */
+        .content-container {
+            padding: 10px 40px 40px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-subtitle {
+            color: var(--gold-primary);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .page-title {
+            font-size: 34px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .page-description {
+            color: #647082;
+            font-size: 15px;
+        }
+
+        .btn-gold-action {
+            background-color: var(--gold-primary);
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(198, 138, 35, 0.25);
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-gold-action:hover {
+            background-color: var(--gold-hover);
+        }
+
+        /* Metric KPI Summary Row */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .kpi-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .kpi-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #6b7280;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .kpi-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background-color: #fbf6ea;
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        .kpi-value {
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .kpi-meta {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        /* Panel Box & Table */
+        .panel-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .panel-header-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn-group {
+            display: flex;
+            background: var(--input-bg);
+            padding: 4px;
+            border-radius: 8px;
+            gap: 2px;
+        }
+
+        .filter-btn {
+            border: none;
+            background: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: #ffffff;
+            color: var(--text-dark);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .data-table th {
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f2ece0;
+            vertical-align: middle;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .user-avatar-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gold-light);
+            color: var(--gold-primary);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            border: 1px solid var(--gold-border);
+        }
+
+        .emp-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .emp-name {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .emp-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-completed {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .badge-pending {
+            background: #fffbeb;
+            color: #b45309;
+        }
+
+        .badge-grade {
+            background: #f3f4f6;
+            color: #374151;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .action-icon-btn {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 15px;
+            padding: 6px;
+            transition: color 0.2s;
+        }
+
+        .action-icon-btn:hover {
+            color: var(--gold-primary);
+        }
+
+        .score-bar-bg {
+            width: 100px;
+            height: 6px;
+            background-color: var(--input-bg);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            background-color: var(--gold-primary);
+        }
+
+        /* Modal Structure */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 28px;
+            border-radius: 12px;
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .modal-subtext {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .btn-modal-close {
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Form Controls for Modals */
+        .form-group {
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--text-dark);
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--gold-primary);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .detail-value {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Sidebar -->
+<aside class="sidebar">
+    <div>
+        <div class="brand-header">
+            <div class="logo-box">GP</div>
+            <div>
+                <div class="brand-title">Hotel Workforce Pro</div>
+                <div class="brand-subtitle">GOLDEN PALM HOTEL</div>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="section-label">WORKSPACE</div>
+            <a href="index.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-border-all"></i> Dashboard</div>
+            </a>
+            <a href="user-access-administration.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-shield-halved"></i> User Access & Administration</div>
+                <span class="nav-tag">M1</span>
+            </a>
+            <a href="employee-profiles.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-user-group"></i> Employee Profiles</div>
+                <span class="nav-tag">M2</span>
+            </a>
+            <a href="attendance-time-tracking.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-calendar-days"></i> Attendance & Time Tracking</div>
+                <span class="nav-tag">M3</span>
+            </a>
+            <a href="leave-management.html" class="nav-item">
+                <div class="nav-left"><i class="fa-regular fa-clipboard"></i> Leave Management</div>
+                <span class="nav-tag">M4</span>
+            </a>
+            <a href="payroll-payslip-processing.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-file-invoice-dollar"></i> Payroll & Payslip Processing</div>
+                <span class="nav-tag">M5</span>
+            </a>
+            <a href="performance-management.html" class="nav-item active">
+                <div class="nav-left"><i class="fa-solid fa-clipboard-check"></i> Performance Management</div>
+                <span class="nav-tag">M6</span>
+            </a>
+            <a href="reporting-analytics.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-chart-line"></i> Reporting & Analytics</div>
+                <span class="nav-tag">M7</span>
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="section-label">PERSONAL</div>
+            <a href="my-profile.html" class="nav-item">
+                <div class="nav-left"><i class="fa-regular fa-user"></i> My Profile</div>
+            </a>
+            <a href="account-security.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-lock"></i> Account Security</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="sidebar-footer" onclick="toggleDropdown()">
+        <div class="avatar">DJ</div>
+        <div class="user-info">
+            <div class="user-name">Dilhani Jayasinghe</div>
+            <div class="user-role">System Admin</div>
+        </div>
+    </div>
+</aside>
+
+<!-- Main Workspace -->
+<main class="main-wrapper">
+    <header class="top-navbar">
+        <div class="breadcrumb">
+            Golden Palm / <span>Performance Management</span>
+        </div>
+        <div class="top-actions">
+            <button class="notification-btn" onclick="triggerAlert('Notifications', 'No unread alerts.')">
+                <i class="fa-regular fa-bell"></i>
+            </button>
+
+            <div class="top-user-profile" onclick="toggleDropdown()">
+                <div style="text-align: right;">
+                    <div style="font-size: 15px; font-weight: 600;">Dilhani Jayasinghe</div>
+                    <div style="font-size: 13px; color: var(--text-muted);">System Admin</div>
+                </div>
+                <div class="avatar" style="background-color: #e2e8f0; color: #475569;">DJ</div>
+                <i class="fa-solid fa-chevron-down" style="font-size: 12px; color: #94a3b8;"></i>
+            </div>
+
+            <!-- Profile Dropdown Menu -->
+            <div class="dropdown-menu" id="profileDropdown">
+                <a href="my-profile.html" class="dropdown-item">
+                    <i class="fa-regular fa-user"></i> My Profile
+                </a>
+                <a href="account-security.html" class="dropdown-item">
+                    <i class="fa-solid fa-lock"></i> Account Security
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="login.html" class="dropdown-item" style="color: var(--danger-color);">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="content-container">
+        <div class="dashboard-header">
+            <div>
+                <div class="page-subtitle">MODULE 6 - PEOPLE DEVELOPMENT</div>
+                <h1 class="page-title">Performance Management</h1>
+                <p class="page-description">Keep review cycles visible, celebrate strong work and give managers a consistent place to record evaluations.</p>
+            </div>
+            <button class="btn-gold-action" onclick="openAddModal()">
+                <i class="fa-solid fa-plus"></i> Add performance record
+            </button>
+        </div>
+
+        <!-- Metric KPI Row -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-head">
+                    <span class="kpi-title">Evaluated Staff</span>
+                    <div class="kpi-icon-box"><i class="fa-solid fa-user-group"></i></div>
+                </div>
+                <div>
+                    <div class="kpi-value" id="kpiEvaluated">0</div>
+                    <div class="kpi-meta">Recorded reviews</div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-head">
+                    <span class="kpi-title">Top Performers</span>
+                    <div class="kpi-icon-box"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+                </div>
+                <div>
+                    <div class="kpi-value" id="kpiTop">0</div>
+                    <div class="kpi-meta">Score above 90</div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-head">
+                    <span class="kpi-title">Avg Department Score</span>
+                    <div class="kpi-icon-box"><i class="fa-solid fa-chart-line"></i></div>
+                </div>
+                <div>
+                    <div class="kpi-value" id="kpiAvg">0.0</div>
+                    <div class="kpi-meta">Across departments</div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-head">
+                    <span class="kpi-title">Reviews Pending</span>
+                    <div class="kpi-icon-box"><i class="fa-regular fa-clock"></i></div>
+                </div>
+                <div>
+                    <div class="kpi-value" id="kpiPending">0</div>
+                    <div class="kpi-meta">Requires completion</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Staff Performance Table Panel -->
+        <div class="panel-box">
+            <div class="panel-header-flex">
+                <div>
+                    <h2 style="font-size: 18px; font-weight: 700; color: var(--text-dark);">Staff performance overview</h2>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">SQL Server Database Live Sync</p>
+                </div>
+                <div class="filter-btn-group">
+                    <button class="filter-btn active" onclick="filterTable('all', this)">All staff</button>
+                    <button class="filter-btn" onclick="filterTable('Completed', this)">Completed</button>
+                    <button class="filter-btn" onclick="filterTable('Pending', this)">Pending</button>
+                </div>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Department</th>
+                    <th>Score</th>
+                    <th>Evaluation Grade</th>
+                    <th>Review Status</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+                </thead>
+                <tbody id="performanceTableBody">
+                <!-- Data populated dynamically via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<!-- Unified Interactive Modal Dialog -->
+<div class="modal" id="systemModal">
+    <div class="modal-content">
+        <div class="modal-header" id="modalTitle">System Dialog</div>
+        <div class="modal-subtext" id="modalSubtext">Performance Workspace</div>
+        <div id="modalBody"></div>
+        <div class="modal-footer" id="modalFooter">
+            <button class="btn-modal-close" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let performanceRecords = [];
+    let employeeList = [];
+    let currentFilter = 'all';
+
+    const API_URL = '/api/performance';
+    const EMP_API_URL = '/api/employees';
+
+    document.addEventListener("DOMContentLoaded", () => {
+        loadEmployeesAndReviews();
+    });
+
+    // Helper: Compute Grade based on score
+    function computeGrade(score) {
+        if (score >= 90) return 'Grade A';
+        if (score >= 80) return 'Grade B';
+        if (score >= 70) return 'Grade C';
+        return 'Grade D';
+    }
+
+    // Load SQL Data
+    async function loadEmployeesAndReviews() {
+        try {
+            const empRes = await fetch(EMP_API_URL);
+            if (empRes.ok) {
+                employeeList = await empRes.json();
+            }
+
+            const perfRes = await fetch(API_URL);
+            if (perfRes.ok) {
+                const data = await perfRes.json();
+                performanceRecords = data.map(item => {
+                    const name = item.employeeName || 'Unknown Staff';
+                    const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'EM';
+                    const score = item.rating || 0;
+                    return {
+                        id: item.reviewId,
+                        empId: item.employeeId,
+                        initials: initials,
+                        name: name,
+                        sub: item.reviewPeriod || 'Q3 2026 review',
+                        dept: 'Staff Member',
+                        score: score,
+                        grade: computeGrade(score),
+                        status: item.status || 'Completed',
+                        reviewer: item.reviewerName || 'Manager',
+                        feedback: item.feedback || ''
+                    };
+                });
+                renderTable();
+                recalculateKPIs();
+            }
+        } catch (err) {
+            console.error("Error loading performance records from SQL Server:", err);
+        }
+    }
+
+    function recalculateKPIs() {
+        const total = performanceRecords.length;
+        let topCount = 0;
+        let pendingCount = 0;
+        let sumScore = 0;
+
+        performanceRecords.forEach(r => {
+            sumScore += r.score;
+            if (r.score >= 90) topCount++;
+            if (r.status === 'Pending') pendingCount++;
+        });
+
+        const avgScore = total > 0 ? (sumScore / total).toFixed(1) : '0.0';
+
+        document.getElementById('kpiEvaluated').innerText = total;
+        document.getElementById('kpiTop').innerText = topCount;
+        document.getElementById('kpiAvg').innerText = avgScore;
+        document.getElementById('kpiPending').innerText = pendingCount;
+    }
+
+    // Render Table Rows
+    function renderTable() {
+        const tbody = document.getElementById('performanceTableBody');
+        tbody.innerHTML = '';
+
+        const filtered = performanceRecords.filter(item => {
+            if (currentFilter === 'all') return true;
+            return item.status === currentFilter;
+        });
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--text-muted);">No performance records found in database.</td></tr>`;
+            return;
+        }
+
+        filtered.forEach(rec => {
+            const tr = document.createElement('tr');
+            const badgeClass = rec.status === 'Completed' ? 'badge-completed' : 'badge-pending';
+
+            tr.innerHTML = `
+                <td>
+                    <div class="emp-cell">
+                        <div class="user-avatar-small">${rec.initials}</div>
+                        <div>
+                            <div class="emp-name">${rec.name}</div>
+                            <div class="emp-sub">${rec.sub}</div>
+                        </div>
+                    </div>
+                </td>
+                <td style="font-weight: 600;">${rec.dept}</td>
+                <td>
+                    <div style="font-weight: 700;">${rec.score}/100</div>
+                    <div class="score-bar-bg"><div class="score-bar-fill" style="width: ${Math.min(rec.score, 100)}%;"></div></div>
+                </td>
+                <td><span class="badge-status badge-grade">• ${rec.grade}</span></td>
+                <td><span class="badge-status ${badgeClass}">• ${rec.status}</span></td>
+                <td style="text-align: right;">
+                    <button class="action-icon-btn" onclick="openViewModal(${rec.id})"><i class="fa-regular fa-eye"></i></button>
+                    <button class="action-icon-btn" onclick="openEditModal(${rec.id})"><i class="fa-regular fa-pen-to-square"></i></button>
+                    <button class="action-icon-btn" onclick="deleteRecord(${rec.id})"><i class="fa-regular fa-trash-can"></i></button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Filter switching
+    function filterTable(filter, btn) {
+        currentFilter = filter;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderTable();
+    }
+
+    // Navbar Profile Dropdown Toggle
+    function toggleDropdown() {
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.toggle('show');
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.closest('.top-user-profile') && !event.target.closest('.sidebar-footer')) {
+            const dropdowns = document.getElementsByClassName('dropdown-menu');
+            for (let i = 0; i < dropdowns.length; i++) {
+                dropdowns[i].classList.remove('show');
+            }
+        }
+    };
+
+    // Modal Control Helpers
+    function closeModal() {
+        document.getElementById('systemModal').style.display = 'none';
+    }
+
+    function triggerAlert(title, text) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalSubtext').innerText = text;
+        document.getElementById('modalBody').innerHTML = '';
+        document.getElementById('modalFooter').innerHTML = `<button class="btn-modal-close" onclick="closeModal()">Close</button>`;
+        document.getElementById('systemModal').style.display = 'flex';
+    }
+
+    // 1. Add Performance Record Form Modal
+    function openAddModal() {
+        document.getElementById('modalTitle').innerText = 'Add Performance Record';
+        document.getElementById('modalSubtext').innerText = 'Create a new evaluation for an employee.';
+
+        let empOptions = '';
+        employeeList.forEach(emp => {
+            empOptions += `<option value="${emp.employeeId}">${emp.fullName} (EMP-${emp.employeeCode || emp.employeeId})</option>`;
+        });
+
+        document.getElementById('modalBody').innerHTML = `
+            <form id="addRecordForm" onsubmit="saveNewRecord(event)">
+                <div class="form-group">
+                    <label>Employee Name</label>
+                    <select id="addEmpSelect" class="form-control" required>
+                        ${empOptions}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Review Period</label>
+                    <input type="text" id="addPeriod" class="form-control" placeholder="e.g. Q3 2026 review" required>
+                </div>
+                <div class="form-group">
+                    <label>Score (0-100)</label>
+                    <input type="number" id="addScore" class="form-control" min="0" max="100" placeholder="e.g. 85" required>
+                </div>
+                <div class="form-group">
+                    <label>Reviewer Name</label>
+                    <input type="text" id="addReviewer" class="form-control" placeholder="e.g. System Admin" required>
+                </div>
+                <div class="form-group">
+                    <label>Review Status</label>
+                    <select id="addStatus" class="form-control" required>
+                        <option value="Completed">Completed</option>
+                        <option value="Pending">Pending</option>
+                    </select>
+                </div>
+            </form>
+        `;
+
+        document.getElementById('modalFooter').innerHTML = `
+            <button class="btn-modal-close" onclick="closeModal()">Cancel</button>
+            <button class="btn-gold-action" style="padding: 10px 18px;" onclick="document.getElementById('addRecordForm').requestSubmit()">Save Record</button>
+        `;
+        document.getElementById('systemModal').style.display = 'flex';
+    }
+
+    async function saveNewRecord(e) {
+        e.preventDefault();
+        const empId = parseInt(document.getElementById('addEmpSelect').value);
+        const period = document.getElementById('addPeriod').value.trim();
+        const score = parseInt(document.getElementById('addScore').value, 10);
+        const reviewer = document.getElementById('addReviewer').value.trim();
+        const status = document.getElementById('addStatus').value;
+
+        const payload = {
+            employeeId: empId,
+            reviewPeriod: period,
+            rating: score,
+            reviewerName: reviewer,
+            status: status,
+            feedback: "Evaluation score logged via workspace portal."
+        };
+
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error(errText);
+            }
+
+            closeModal();
+            loadEmployeesAndReviews();
+        } catch (err) {
+            alert("Error saving record to SQL Server:\n" + err.message);
+        }
+    }
+
+    // 2. View Performance Record Modal (Eye Icon)
+    function openViewModal(id) {
+        const rec = performanceRecords.find(item => item.id === id);
+        if (!rec) return;
+
+        document.getElementById('modalTitle').innerText = 'Performance Record Details';
+        document.getElementById('modalSubtext').innerText = `${rec.name} - ${rec.sub}`;
+
+        document.getElementById('modalBody').innerHTML = `
+            <div class="detail-row">
+                <span class="detail-label">Employee Name</span>
+                <span class="detail-value">${rec.name}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Evaluation Cycle</span>
+                <span class="detail-value">${rec.sub}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Score</span>
+                <span class="detail-value">${rec.score} / 100</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Grade</span>
+                <span class="detail-value">${rec.grade}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Reviewer</span>
+                <span class="detail-value">${rec.reviewer}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Status</span>
+                <span class="detail-value">${rec.status}</span>
+            </div>
+        `;
+
+        document.getElementById('modalFooter').innerHTML = `
+            <button class="btn-modal-close" onclick="closeModal()">Close</button>
+        `;
+        document.getElementById('systemModal').style.display = 'flex';
+    }
+
+    // 3. Edit Performance Record Modal (Pencil Icon)
+    function openEditModal(id) {
+        const rec = performanceRecords.find(item => item.id === id);
+        if (!rec) return;
+
+        document.getElementById('modalTitle').innerText = 'Edit Evaluation Record';
+        document.getElementById('modalSubtext').innerText = `Updating details for ${rec.name}`;
+
+        document.getElementById('modalBody').innerHTML = `
+            <form id="editRecordForm" onsubmit="saveEditRecord(event, ${rec.id})">
+                <div class="form-group">
+                    <label>Review Period</label>
+                    <input type="text" id="editPeriod" class="form-control" value="${rec.sub}" required>
+                </div>
+                <div class="form-group">
+                    <label>Score (0-100)</label>
+                    <input type="number" id="editScore" class="form-control" min="0" max="100" value="${rec.score}" required>
+                </div>
+                <div class="form-group">
+                    <label>Reviewer Name</label>
+                    <input type="text" id="editReviewer" class="form-control" value="${rec.reviewer}" required>
+                </div>
+                <div class="form-group">
+                    <label>Review Status</label>
+                    <select id="editStatus" class="form-control" required>
+                        <option value="Completed" ${rec.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                        <option value="Pending" ${rec.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                    </select>
+                </div>
+            </form>
+        `;
+
+        document.getElementById('modalFooter').innerHTML = `
+            <button class="btn-modal-close" onclick="closeModal()">Cancel</button>
+            <button class="btn-gold-action" style="padding: 10px 18px;" onclick="document.getElementById('editRecordForm').requestSubmit()">Update Record</button>
+        `;
+        document.getElementById('systemModal').style.display = 'flex';
+    }
+
+    async function saveEditRecord(e, id) {
+        e.preventDefault();
+        const rec = performanceRecords.find(item => item.id === id);
+        if (!rec) return;
+
+        const payload = {
+            employeeId: rec.empId,
+            reviewPeriod: document.getElementById('editPeriod').value.trim(),
+            rating: parseInt(document.getElementById('editScore').value, 10),
+            reviewerName: document.getElementById('editReviewer').value.trim(),
+            status: document.getElementById('editStatus').value,
+            feedback: rec.feedback || "Updated evaluation record."
+        };
+
+        try {
+            const res = await fetch(`${API_URL}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error(errText);
+            }
+
+            closeModal();
+            loadEmployeesAndReviews();
+        } catch (err) {
+            alert("Error updating record in SQL Server:\n" + err.message);
+        }
+    }
+
+    // 4. Delete Performance Record (Trash Icon)
+    async function deleteRecord(id) {
+        if (confirm('Are you sure you want to delete this performance review?')) {
+            try {
+                const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(errText);
+                }
+                loadEmployeesAndReviews();
+            } catch (err) {
+                alert("Error deleting record from SQL Server:\n" + err.message);
+            }
+        }
+    }
+</script>
+</body>
+</html>
