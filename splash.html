@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading - Hotel Workforce Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap">
+    <style>
+        :root {
+            --sidebar-bg: #1c222b;
+            --gold-primary: #d4a038;
+            --text-dark: #1f2937;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--sidebar-bg);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .splash-container {
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .logo-box {
+            background-color: var(--gold-primary);
+            color: #fff;
+            font-weight: 800;
+            font-size: 28px;
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 25px rgba(212, 160, 56, 0.3);
+        }
+
+        .brand-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-subtitle {
+            color: var(--gold-primary);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+
+        /* Loading Bar */
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: #28303c;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--gold-primary);
+            border-radius: 10px;
+            animation: fillProgress 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .loading-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #8391a5;
+        }
+
+        @keyframes fillProgress {
+            0% { width: 0%; }
+            50% { width: 60%; }
+            100% { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="splash-container">
+    <div class="logo-box">GP</div>
+    <div class="brand-title">Hotel Workforce Pro</div>
+    <div class="brand-subtitle">Golden Palm Hotel</div>
+
+    <div class="progress-track">
+        <div class="progress-fill"></div>
+    </div>
+    <div class="loading-status" id="statusText">Initializing enterprise security modules...</div>
+</div>
+
+<script>
+    const statusText = document.getElementById('statusText');
+
+    setTimeout(() => {
+        statusText.innerText = "Loading workforce & security profiles...";
+    }, 800);
+
+    setTimeout(() => {
+        statusText.innerText = "Redirecting to authentication portal...";
+    }, 1700);
+
+    // Redirects to login.html after animation completes
+    setTimeout(() => {
+        window.location.href = "login.html";
+    }, 2400);
+</script>
+</body>
+</html>

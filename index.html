@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="auth-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Palm Hotel Control Center - Hotel Workforce Pro</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+    <style>
+        :root {
+            --bg-main: #f5f2eb;
+            --sidebar-bg: #1e242d;
+            --sidebar-text: #9aa3b0;
+            --sidebar-hover: #29303d;
+            --gold-primary: #c68a23;
+            --gold-hover: #b27a1e;
+            --gold-light: #fbf6ea;
+            --gold-border: #f2e2be;
+            --text-dark: #1b2128;
+            --text-muted: #6b7280;
+            --card-bg: #ffffff;
+            --border-color: #ebe5d8;
+            --input-bg: #f7f5ef;
+            --danger-color: #dc2626;
+            --danger-light: #fef2f2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .brand-header {
+            padding: 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-box {
+            background-color: var(--gold-primary);
+            color: #fff;
+            font-weight: 800;
+            font-size: 18px;
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-title {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 1.2;
+        }
+
+        .brand-subtitle {
+            color: #8c97a8;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            padding: 10px 0;
+        }
+
+        .section-label {
+            color: #556070;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 24px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 24px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background-color: var(--sidebar-hover);
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background-color: rgba(198, 138, 35, 0.15);
+            color: var(--gold-primary);
+            border-left: 4px solid var(--gold-primary);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-left i {
+            width: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .nav-tag {
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #79879c;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid #2b3342;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .sidebar-footer:hover {
+            background: #252d38;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #384252;
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            color: var(--sidebar-text);
+            font-size: 13px;
+        }
+
+        /* Main Workspace Layout */
+        .main-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .top-navbar {
+            height: 64px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #737b88;
+        }
+
+        .breadcrumb span {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #4b5563;
+            cursor: pointer;
+            position: relative;
+            padding: 6px;
+        }
+
+        .notification-btn:hover {
+            color: var(--text-dark);
+        }
+
+        .top-user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .top-user-profile:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        /* Profile Dropdown Menu */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            width: 220px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            z-index: 500;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--input-bg);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        /* Content Container */
+        .content-container {
+            padding: 10px 40px 40px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-subtitle {
+            color: var(--gold-primary);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .page-title {
+            font-size: 34px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .page-description {
+            color: #647082;
+            font-size: 15px;
+        }
+
+        .btn-gold-action {
+            background-color: var(--gold-primary);
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(198, 138, 35, 0.25);
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-gold-action:hover {
+            background-color: var(--gold-hover);
+        }
+
+        /* Top 4 KPI Metrics Row */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            position: relative;
+        }
+
+        .kpi-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .kpi-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #6b7280;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .kpi-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background-color: #fbf6ea;
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        .kpi-value {
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .kpi-meta {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .kpi-meta-highlight {
+            color: var(--gold-primary);
+            font-weight: 600;
+        }
+
+        /* Main Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2.2fr 1fr;
+            gap: 24px;
+        }
+
+        /* Modules Section */
+        .modules-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .modules-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .panel-heading {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .panel-subtext {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .module-badge-total {
+            font-size: 12px;
+            font-weight: 600;
+            color: #8c97a8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .module-card {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 18px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 140px;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .module-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--gold-primary);
+            box-shadow: 0 4px 12px rgba(198, 138, 35, 0.08);
+        }
+
+        .module-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .module-number {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gold-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .module-icon {
+            color: var(--gold-primary);
+            font-size: 15px;
+        }
+
+        .module-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .module-desc {
+            font-size: 12px;
+            color: #717d8d;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        .module-link {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Attendance Pulse Panel */
+        .attendance-pulse-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .dept-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .dept-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            width: 140px;
+        }
+
+        .progress-bar-bg {
+            flex-grow: 1;
+            height: 10px;
+            background-color: var(--input-bg);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 0 16px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--gold-primary);
+            border-radius: 6px;
+        }
+
+        .dept-percent {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            width: 45px;
+            text-align: right;
+        }
+
+        /* Right Side Panels */
+        .side-panel-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .feed-item {
+            padding: 14px 0;
+            border-bottom: 1px solid #f2ece0;
+            position: relative;
+            padding-left: 18px;
+        }
+
+        .feed-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .feed-dot {
+            width: 7px;
+            height: 7px;
+            background-color: var(--gold-primary);
+            border-radius: 50%;
+            position: absolute;
+            left: 0;
+            top: 20px;
+        }
+
+        .feed-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+        }
+
+        .feed-desc {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+
+        .feed-time {
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #9ca3af;
+        }
+
+        /* Quick Actions */
+        .action-btn-outline {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .action-btn-outline:last-child {
+            margin-bottom: 0;
+        }
+
+        .action-btn-outline:hover {
+            border-color: var(--gold-primary);
+            background-color: var(--gold-light);
+            color: var(--gold-primary);
+        }
+
+        .action-btn-outline i {
+            color: var(--gold-primary);
+            font-size: 16px;
+        }
+
+        /* Modal Structure */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 28px;
+            border-radius: 12px;
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .modal-subtext {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .btn-modal-close {
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Sidebar -->
+<aside class="sidebar">
+    <div>
+        <div class="brand-header">
+            <div class="logo-box">GP</div>
+            <div>
+                <div class="brand-title">Hotel Workforce Pro</div>
+                <div class="brand-subtitle">GOLDEN PALM HOTEL</div>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="section-label">WORKSPACE</div>
+            <a href="index.html" class="nav-item active">
+                <div class="nav-left"><i class="fa-solid fa-border-all"></i> Dashboard</div>
+            </a>
+            <a href="user-access-administration.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-shield-halved"></i> User Access & Administration</div>
+                <span class="nav-tag">M1</span>
+            </a>
+            <a href="employee-profiles.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-user-group"></i> Employee Profiles</div>
+                <span class="nav-tag">M2</span>
+            </a>
+            <a href="attendance-time-tracking.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-calendar-days"></i> Attendance & Time Tracking</div>
+                <span class="nav-tag">M3</span>
+            </a>
+            <a href="leave-management.html" class="nav-item">
+                <div class="nav-left"><i class="fa-regular fa-clipboard"></i> Leave Management</div>
+                <span class="nav-tag">M4</span>
+            </a>
+            <a href="payroll-payslip-processing.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-file-invoice-dollar"></i> Payroll & Payslip Processing</div>
+                <span class="nav-tag">M5</span>
+            </a>
+            <a href="performance-management.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-clipboard-check"></i> Performance Management</div>
+                <span class="nav-tag">M6</span>
+            </a>
+            <a href="reporting-analytics.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-chart-line"></i> Reporting & Analytics</div>
+                <span class="nav-tag">M7</span>
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="section-label">PERSONAL</div>
+            <a href="my-profile.html" class="nav-item">
+                <div class="nav-left"><i class="fa-regular fa-user"></i> My Profile</div>
+            </a>
+            <a href="account-security.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-lock"></i> Account Security</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="sidebar-footer" onclick="toggleDropdown()">
+        <div class="avatar">DJ</div>
+        <div class="user-info">
+            <div class="user-name">Dilhani Jayasinghe</div>
+            <div class="user-role">System Admin</div>
+        </div>
+    </div>
+</aside>
+
+<!-- Main Workspace -->
+<main class="main-wrapper">
+    <header class="top-navbar">
+        <div class="breadcrumb">
+            Golden Palm / <span>Dashboard</span>
+        </div>
+        <div class="top-actions">
+            <button class="notification-btn" onclick="openModal('Notifications', 'Active Alert Summary', '1. Engineering team attendance alert triggered.<br>2. August payroll cycle awaiting manager sign-off.')">
+                <i class="fa-regular fa-bell"></i>
+            </button>
+
+            <div class="top-user-profile" onclick="toggleDropdown()">
+                <div style="text-align: right;">
+                    <div style="font-size: 15px; font-weight: 600;">Dilhani Jayasinghe</div>
+                    <div style="font-size: 13px; color: var(--text-muted);">System Admin</div>
+                </div>
+                <div class="avatar" style="background-color: #e2e8f0; color: #475569;">DJ</div>
+                <i class="fa-solid fa-chevron-down" style="font-size: 12px; color: #94a3b8;"></i>
+            </div>
+
+            <!-- Dropdown Menu -->
+            <div class="dropdown-menu" id="profileDropdown">
+                <a href="my-profile.html" class="dropdown-item">
+                    <i class="fa-regular fa-user"></i> My Profile
+                </a>
+                <a href="account-security.html" class="dropdown-item">
+                    <i class="fa-solid fa-lock"></i> Account Security
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="login.html" class="dropdown-item" style="color: var(--danger-color);">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="content-container">
+        <div class="dashboard-header">
+            <div>
+                <div class="page-subtitle">OPERATIONS OVERVIEW - TUESDAY, 18 AUGUST 2026</div>
+                <h1 class="page-title">Golden Palm Hotel Control Center</h1>
+                <p class="page-description">A clear view of the people, time and decisions moving the hotel forward today.</p>
+            </div>
+            <a href="employee-profiles.html" class="btn-gold-action">
+                <i class="fa-solid fa-user-group"></i> View workforce
+            </a>
+        </div>
+
+        <!-- Metric KPI Summary Row -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-head">
+                    <span class="kpi-title">Total Workforce</span>
+                    <div class="kpi-icon-box"><i class="fa-solid fa-user-group"></i></div>
+                </div>
+                <div>
+                    <div class="kpi-value">184</div>
+                    <div class="kpi-meta"><span class="kpi-meta-highlight">+6</span> team members this quarter</div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-head">
+                    <span class="kpi-title">Present Today</span>
+                    <div class="kpi-icon-box"><i class="fa-regular fa-calendar-check"></i></div>
+                </div>
+                <div>
+                    <div class="kpi-value">171</div>
+                    <div class="kpi-meta">92.9% attendance · <span style="color: #d97706; font-weight: 600;">5 late</span></div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-head">
+                    <span class="kpi-title">Leave Requests</span>
+                    <div class="kpi-icon-box"><i class="fa-regular fa-clipboard"></i></div>
+                </div>
+                <div>
+                    <div class="kpi-value">04</div>
+                    <div class="kpi-meta"><span class="kpi-meta-highlight">2 need manager review</span></div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-head">
+                    <span class="kpi-title">Payroll This Cycle</span>
+                    <div class="kpi-icon-box"><i class="fa-solid fa-coins"></i></div>
+                </div>
+                <div>
+                    <div class="kpi-value">LKR 4.28M</div>
+                    <div class="kpi-meta">August batch · <span style="color: #d97706; font-weight: 600;">awaiting approval</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Workspace Grid -->
+        <div class="dashboard-grid">
+            <div>
+                <!-- Modules Grid Panel -->
+                <div class="modules-panel">
+                    <div class="modules-header">
+                        <div class="panel-heading">System Modules Directory</div>
+                        <span class="module-badge-total">07 modules</span>
+                    </div>
+                    <div class="panel-subtext">Jump into the workspace you need.</div>
+
+                    <div class="modules-grid">
+                        <a href="user-access-administration.html" class="module-card">
+                            <div>
+                                <div class="module-card-top">
+                                    <span class="module-number">M1</span>
+                                    <i class="fa-solid fa-shield-halved module-icon"></i>
+                                </div>
+                                <div class="module-title">User Access & Administration</div>
+                                <div class="module-desc">Manage user accounts, roles and access.</div>
+                            </div>
+                            <div class="module-link">Open module <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i></div>
+                        </a>
+
+                        <a href="employee-profiles.html" class="module-card">
+                            <div>
+                                <div class="module-card-top">
+                                    <span class="module-number">M2</span>
+                                    <i class="fa-solid fa-user-group module-icon"></i>
+                                </div>
+                                <div class="module-title">Employee Profiles</div>
+                                <div class="module-desc">Maintain a trusted employee directory.</div>
+                            </div>
+                            <div class="module-link">Open module <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i></div>
+                        </a>
+
+                        <a href="attendance-time-tracking.html" class="module-card">
+                            <div>
+                                <div class="module-card-top">
+                                    <span class="module-number">M3</span>
+                                    <i class="fa-regular fa-calendar-check module-icon"></i>
+                                </div>
+                                <div class="module-title">Attendance & Time Tracking</div>
+                                <div class="module-desc">Monitor daily attendance and time logs.</div>
+                            </div>
+                            <div class="module-link">Open module <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i></div>
+                        </a>
+
+                        <a href="leave-management.html" class="module-card">
+                            <div>
+                                <div class="module-card-top">
+                                    <span class="module-number">M4</span>
+                                    <i class="fa-regular fa-clipboard module-icon"></i>
+                                </div>
+                                <div class="module-title">Leave Management</div>
+                                <div class="module-desc">Review and approve team leave.</div>
+                            </div>
+                            <div class="module-link">Open module <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i></div>
+                        </a>
+
+                        <a href="payroll-payslip-processing.html" class="module-card">
+                            <div>
+                                <div class="module-card-top">
+                                    <span class="module-number">M5</span>
+                                    <i class="fa-regular fa-envelope module-icon"></i>
+                                </div>
+                                <div class="module-title">Payroll & Payslip Processing</div>
+                                <div class="module-desc">Prepare payroll and release payslips.</div>
+                            </div>
+                            <div class="module-link">Open module <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i></div>
+                        </a>
+
+                        <a href="performance-management.html" class="module-card">
+                            <div>
+                                <div class="module-card-top">
+                                    <span class="module-number">M6</span>
+                                    <i class="fa-regular fa-square-check module-icon"></i>
+                                </div>
+                                <div class="module-title">Performance Management</div>
+                                <div class="module-desc">Track reviews and team performance.</div>
+                            </div>
+                            <div class="module-link">Open module <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i></div>
+                        </a>
+
+                        <a href="reporting-analytics.html" class="module-card">
+                            <div>
+                                <div class="module-card-top">
+                                    <span class="module-number">M7</span>
+                                    <i class="fa-solid fa-chart-line module-icon"></i>
+                                </div>
+                                <div class="module-title">Reporting & Analytics</div>
+                                <div class="module-desc">Read the hotel through operational data.</div>
+                            </div>
+                            <div class="module-link">Open module <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i></div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Attendance Pulse Panel -->
+                <div class="attendance-pulse-panel">
+                    <div class="panel-heading" style="margin-bottom: 4px;">Attendance pulse</div>
+                    <div class="panel-subtext" style="margin-bottom: 20px;">Today by department</div>
+
+                    <div class="dept-row">
+                        <span class="dept-name">Front Office</span>
+                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 96%;"></div></div>
+                        <span class="dept-percent">96%</span>
+                    </div>
+                    <div class="dept-row">
+                        <span class="dept-name">Housekeeping</span>
+                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 92%;"></div></div>
+                        <span class="dept-percent">92%</span>
+                    </div>
+                    <div class="dept-row">
+                        <span class="dept-name">Food & Beverage</span>
+                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 94%;"></div></div>
+                        <span class="dept-percent">94%</span>
+                    </div>
+                    <div class="dept-row">
+                        <span class="dept-name">Engineering</span>
+                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 88%;"></div></div>
+                        <span class="dept-percent">88%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side Section: Feed & Quick Actions -->
+            <div>
+                <!-- Management Feed -->
+                <div class="side-panel-box">
+                    <div class="panel-heading" style="margin-bottom: 4px;">Management feed</div>
+                    <div class="panel-subtext" style="margin-bottom: 16px;">The latest movement across the hotel</div>
+
+                    <div class="feed-item">
+                        <div class="feed-dot"></div>
+                        <div class="feed-title">Payroll cycle completed</div>
+                        <div class="feed-desc">August payroll was finalized for 184 employees.</div>
+                        <div class="feed-time">Today , 09:45</div>
+                    </div>
+
+                    <div class="feed-item">
+                        <div class="feed-dot"></div>
+                        <div class="feed-title">Attendance exception detected</div>
+                        <div class="feed-desc">Engineering attendance fell below the 93% alert level.</div>
+                        <div class="feed-time">Today , 08:20</div>
+                    </div>
+
+                    <div class="feed-item">
+                        <div class="feed-dot"></div>
+                        <div class="feed-title">Leave request submitted</div>
+                        <div class="feed-desc">Nadeesha Fernando requested five days of annual leave.</div>
+                        <div class="feed-time">Yesterday , 16:32</div>
+                    </div>
+
+                    <div class="feed-item">
+                        <div class="feed-dot"></div>
+                        <div class="feed-title">Profile updated</div>
+                        <div class="feed-desc">A new Finance Manager profile was activated.</div>
+                        <div class="feed-time">Yesterday , 14:10</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="side-panel-box">
+                    <div class="panel-heading" style="margin-bottom: 16px;">Quick actions</div>
+
+                    <a href="attendance-time-tracking.html" class="action-btn-outline">
+                        <i class="fa-regular fa-calendar-check"></i> Record attendance
+                    </a>
+
+                    <a href="leave-management.html" class="action-btn-outline">
+                        <i class="fa-regular fa-clipboard"></i> Review leave requests
+                    </a>
+
+                    <a href="reporting-analytics.html" class="action-btn-outline">
+                        <i class="fa-solid fa-chart-line"></i> Open reports center
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Modal Dialog Window -->
+<div class="modal" id="systemModal">
+    <div class="modal-content">
+        <div class="modal-header" id="modalTitle">System Dialog</div>
+        <div class="modal-subtext" id="modalSubtext">Module Information</div>
+        <div id="modalBody" style="font-size: 14px; color: var(--text-dark); line-height: 1.5;"></div>
+        <div class="modal-footer">
+            <button class="btn-modal-close" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Scripting -->
+<script>
+    function toggleDropdown() {
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.toggle('show');
+    }
+
+    window.addEventListener('click', function(e) {
+        const profileArea = document.querySelector('.top-user-profile');
+        const dropdown = document.getElementById('profileDropdown');
+        if (!profileArea.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    });
+
+    function openModal(title, subtext, content) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalSubtext').innerText = subtext;
+        document.getElementById('modalBody').innerHTML = content;
+        document.getElementById('systemModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('systemModal').style.display = 'none';
+    }
+</script>
+</body>
+</html>

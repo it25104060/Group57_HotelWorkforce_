@@ -1,0 +1,3037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="auth-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>User Access & Administration - Hotel Workforce Pro</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+
+    <style>
+        :root {
+            --bg-main: #f8f6f0;
+            --sidebar-bg: #1e232d;
+            --sidebar-text: #9aa3b0;
+            --sidebar-hover: #2a303c;
+            --gold-primary: #d4a038;
+            --gold-hover: #b88a2c;
+            --gold-light: #fef8ec;
+            --gold-border: #f3e6c8;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --card-bg: #ffffff;
+            --border-color: #f0ebd9;
+            --green-badge-bg: #e8f5e9;
+            --green-badge-text: #2e7d32;
+            --red-badge-bg: #fde8e8;
+            --red-badge-text: #c81e1e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .brand-header {
+            padding: 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-box {
+            background-color: var(--gold-primary);
+            color: #fff;
+            font-weight: 800;
+            font-size: 16px;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-title {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 1.2;
+        }
+
+        .brand-subtitle {
+            color: var(--gold-primary);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            padding: 10px 0;
+        }
+
+        .section-label {
+            color: #586274;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 24px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background-color: var(--sidebar-hover);
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background-color: rgba(212, 160, 56, 0.15);
+            color: var(--gold-primary);
+            border-left: 3px solid var(--gold-primary);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-left i {
+            width: 18px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .nav-tag {
+            font-size: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 5px;
+            border-radius: 4px;
+            color: #8391a5;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid #2d3442;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #384252;
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            color: var(--sidebar-text);
+            font-size: 11px;
+        }
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .main-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .top-navbar {
+            height: 64px;
+            padding: 0 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: transparent;
+        }
+
+        .breadcrumb {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .breadcrumb span {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #4b5563;
+            cursor: pointer;
+        }
+
+        .top-user-profile-container {
+            position: relative;
+        }
+
+        .top-user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .top-user-profile:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 210px;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            padding: 6px 0;
+            z-index: 1000;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .dropdown-item.logout {
+            color: #dc2626;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 6px 0;
+        }
+
+        .content-container {
+            padding: 10px 36px 40px;
+        }
+
+        .page-subtitle {
+            color: var(--gold-primary);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 8px;
+        }
+
+        .page-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+        }
+
+        .page-description {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .btn-action {
+            background-color: var(--gold-primary);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(212, 160, 56, 0.2);
+            transition: background 0.2s;
+        }
+
+        .btn-action:hover {
+            background-color: var(--gold-hover);
+        }
+
+        /* =========================
+           STATS
+        ========================= */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #888;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+
+        .stat-desc {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .stat-icon-wrapper {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background-color: var(--gold-light);
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* =========================
+           PANELS
+        ========================= */
+
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .panel-box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .panel-header {
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .panel-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #888;
+            text-align: left;
+            padding: 12px 14px;
+            border-bottom: 1px solid #f0f0f0;
+            background-color: #faf9f6;
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            padding: 16px 14px;
+            border-bottom: 1px solid #f5f5f5;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #f3e8d3;
+            color: #92630d;
+            font-weight: 700;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .user-details .name {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        .user-details .sub {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .mono-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #4b5563;
+        }
+
+        .linked-employee {
+            font-size: 12px;
+            color: #4b5563;
+        }
+
+        .linked-employee.none {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .badge-active {
+            background-color: var(--green-badge-bg);
+            color: var(--green-badge-text);
+        }
+
+        .badge-inactive {
+            background-color: var(--red-badge-bg);
+            color: var(--red-badge-text);
+        }
+
+        .badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: currentColor;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-icon {
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+
+        .action-icon:hover {
+            color: var(--text-dark);
+        }
+
+        /* =========================
+           ROLE LIST
+        ========================= */
+
+        .role-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .role-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f3f3f3;
+        }
+
+        .role-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .role-info {
+            display: flex;
+            gap: 10px;
+        }
+
+        .role-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--gold-primary);
+            margin-top: 6px;
+        }
+
+        .role-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .role-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .role-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text-dark);
+        }
+
+        /* =========================
+           BACKUP
+        ========================= */
+
+        .backup-status-box {
+            background-color: #f9f7f2;
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .backup-status-box i {
+            color: var(--gold-primary);
+        }
+
+        .btn-backup {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-backup:hover {
+            background-color: #fcfbfa;
+        }
+
+        /* =========================
+           MODAL
+        ========================= */
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 28px;
+            border-radius: 12px;
+            width: 440px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtext {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            background: #fff;
+        }
+
+        .form-control:focus {
+            border-color: var(--gold-primary);
+        }
+
+        .employee-help {
+            margin-top: 5px;
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-confirm {
+            background: var(--gold-primary);
+            color: #fff;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-confirm:hover {
+            background: var(--gold-hover);
+        }
+
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .bottom-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content-container {
+                padding: 20px;
+            }
+
+            .top-navbar {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside class="sidebar">
+
+    <div>
+
+        <div class="brand-header">
+            <div class="logo-box">GP</div>
+
+            <div>
+                <div class="brand-title">Hotel Workforce Pro</div>
+                <div class="brand-subtitle">Golden Palm Hotel</div>
+            </div>
+        </div>
+
+        <div class="nav-section">
+
+            <div class="section-label">WORKSPACE</div>
+
+            <a href="index.html" class="nav-item">
+                <div class="nav-left">
+                    <i class="fa-solid fa-border-all"></i>
+                    Dashboard
+                </div>
+            </a>
+
+            <a href="user-access-administration.html"
+               class="nav-item active">
+
+                <div class="nav-left">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    User Access & Administration
+                </div>
+
+                <span class="nav-tag">M1</span>
+            </a>
+
+            <a href="employee-profiles.html" class="nav-item">
+                <div class="nav-left">
+                    <i class="fa-solid fa-user-group"></i>
+                    Employee Profiles
+                </div>
+                <span class="nav-tag">M2</span>
+            </a>
+
+            <a href="attendance-time-tracking.html" class="nav-item">
+                <div class="nav-left">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    Attendance & Time Tracking
+                </div>
+                <span class="nav-tag">M3</span>
+            </a>
+
+            <a href="leave-management.html" class="nav-item">
+                <div class="nav-left">
+                    <i class="fa-regular fa-clipboard"></i>
+                    Leave Management
+                </div>
+                <span class="nav-tag">M4</span>
+            </a>
+
+            <a href="payroll-payslip-processing.html" class="nav-item">
+                <div class="nav-left">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    Payroll & Payslip Processing
+                </div>
+                <span class="nav-tag">M5</span>
+            </a>
+
+            <a href="performance-management.html" class="nav-item">
+                <div class="nav-left">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    Performance Management
+                </div>
+                <span class="nav-tag">M6</span>
+            </a>
+
+            <a href="reporting-analytics.html" class="nav-item">
+                <div class="nav-left">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Reporting & Analytics
+                </div>
+                <span class="nav-tag">M7</span>
+            </a>
+
+        </div>
+
+        <div class="nav-section">
+
+            <div class="section-label">PERSONAL</div>
+
+            <a href="my-profile.html" class="nav-item">
+                <div class="nav-left">
+                    <i class="fa-regular fa-user"></i>
+                    My Profile
+                </div>
+            </a>
+
+            <a href="account-security.html" class="nav-item">
+                <div class="nav-left">
+                    <i class="fa-solid fa-lock"></i>
+                    Account Security
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="sidebar-footer">
+
+        <div class="avatar">DJ</div>
+
+        <div class="user-info">
+            <div class="user-name">Dilhani Jayasinghe</div>
+            <div class="user-role">System Admin</div>
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="main-wrapper">
+
+    <header class="top-navbar">
+
+        <div class="breadcrumb">
+            Golden Palm /
+            <span>User Access & Administration</span>
+        </div>
+
+        <div class="top-actions">
+
+            <button class="notification-btn"
+                    onclick="alert('System notifications are up to date.')">
+                <i class="fa-regular fa-bell"></i>
+            </button>
+
+            <div class="top-user-profile-container">
+
+                <div class="top-user-profile"
+                     onclick="toggleProfileDropdown(event)">
+
+                    <div style="text-align: right;">
+                        <div style="font-size: 13px; font-weight: 600;">
+                            Dilhani Jayasinghe
+                        </div>
+
+                        <div style="font-size: 11px; color: var(--text-muted);">
+                            System Admin
+                        </div>
+                    </div>
+
+                    <div class="avatar"
+                         style="background-color: #e5e7eb; color: #4b5563;">
+                        DJ
+                    </div>
+
+                    <i class="fa-solid fa-chevron-down"
+                       style="font-size: 11px; color: #9ca3af;">
+                    </i>
+
+                </div>
+
+                <div class="profile-dropdown" id="profileDropdown">
+
+                    <a href="my-profile.html" class="dropdown-item">
+                        <i class="fa-regular fa-user"></i>
+                        My Profile
+                    </a>
+
+                    <a href="account-security.html" class="dropdown-item">
+                        <i class="fa-solid fa-lock"></i>
+                        Account Settings
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <a href="#"
+                       class="dropdown-item logout"
+                       onclick="handleLogout(event)">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Log Out
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <section class="content-container">
+
+        <div class="page-subtitle">
+            MODULE 1 - ACCESS ADMINISTRATION
+        </div>
+
+        <div class="header-row">
+
+            <h1 class="page-title">
+                User Access & Administration
+            </h1>
+
+            <div style="display: flex; gap: 10px;">
+
+                <button class="btn-action"
+                        onclick="openAuditLogsModal()"
+                        style="background-color: #1e232d;">
+
+                    <i class="fa-solid fa-history"></i>
+                    View Audit Logs
+
+                </button>
+
+                <button class="btn-action"
+                        onclick="openAddUserModal()">
+
+                    <i class="fa-solid fa-plus"></i>
+                    Add user
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <p class="page-description">
+            A controlled view of accounts, roles and the audit trail behind the workforce workspace.
+        </p>
+
+
+        <!-- =====================================================
+             STAT CARDS
+        ====================================================== -->
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    TOTAL ACCOUNTS
+                </div>
+
+                <div class="stat-value" id="totalAccounts">
+                    0
+                </div>
+
+                <div class="stat-desc">
+                    Across all roles
+                </div>
+
+                <div class="stat-icon-wrapper">
+                    <i class="fa-solid fa-user-group"></i>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    ACTIVE USERS
+                </div>
+
+                <div class="stat-value" id="activeUsers">
+                    0
+                </div>
+
+                <div class="stat-desc">
+                    Access currently enabled
+                </div>
+
+                <div class="stat-icon-wrapper">
+                    <i class="fa-regular fa-circle-check"></i>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    INACTIVE USERS
+                </div>
+
+                <div class="stat-value" id="inactiveUsers">
+                    0
+                </div>
+
+                <div class="stat-desc"
+                     style="color: var(--gold-primary);">
+                    Awaiting review
+                </div>
+
+                <div class="stat-icon-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    ROLES DEFINED
+                </div>
+
+                <div class="stat-value">
+                    05
+                </div>
+
+                <div class="stat-desc">
+                    Role-based permissions
+                </div>
+
+                <div class="stat-icon-wrapper">
+                    <i class="fa-shield-halved fa-solid"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MAIN GRID
+        ====================================================== -->
+
+        <div class="bottom-grid">
+
+            <div>
+
+                <div class="panel-box">
+
+                    <div class="panel-header">
+
+                        <div class="panel-title">
+                            User accounts
+                        </div>
+
+                        <div class="panel-sub">
+                            Manage access to Hotel Workforce Pro
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table class="data-table"
+                               id="usersTable">
+
+                            <thead>
+
+                            <tr>
+
+                                <th>FULL NAME</th>
+
+                                <th>EMAIL / USERNAME</th>
+
+                                <th>LINKED EMPLOYEE</th>
+
+                                <th>ROLE</th>
+
+                                <th>STATUS</th>
+
+                                <th>LAST LOGIN</th>
+
+                                <th>ACTIONS</th>
+
+                            </tr>
+
+                            </thead>
+
+                            <tbody>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT SIDE
+            ================================================== -->
+
+            <div class="side-column">
+
+                <div class="panel-box">
+
+                    <div class="panel-header">
+
+                        <div class="panel-title">
+                            Role–based access control
+                        </div>
+
+                        <div class="panel-sub">
+                            Permission groups in this workspace
+                        </div>
+
+                    </div>
+
+
+                    <div class="role-list">
+
+                        <div class="role-item">
+
+                            <div class="role-info">
+
+                                <div class="role-dot"></div>
+
+                                <div>
+
+                                    <div class="role-title">
+                                        IT Admin
+                                    </div>
+
+                                    <div class="role-desc">
+                                        All modules
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="role-count"
+                                 id="roleCountITAdmin">
+                                0 users
+                            </div>
+
+                        </div>
+
+
+                        <div class="role-item">
+
+                            <div class="role-info">
+
+                                <div class="role-dot"></div>
+
+                                <div>
+
+                                    <div class="role-title">
+                                        HR Manager
+                                    </div>
+
+                                    <div class="role-desc">
+                                        People, leave & reports
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="role-count"
+                                 id="roleCountHR">
+                                0 users
+                            </div>
+
+                        </div>
+
+
+                        <div class="role-item">
+
+                            <div class="role-info">
+
+                                <div class="role-dot"></div>
+
+                                <div>
+
+                                    <div class="role-title">
+                                        Finance Manager
+                                    </div>
+
+                                    <div class="role-desc">
+                                        Payroll & reports
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="role-count"
+                                 id="roleCountFinance">
+                                0 users
+                            </div>
+
+                        </div>
+
+
+                        <div class="role-item">
+
+                            <div class="role-info">
+
+                                <div class="role-dot"></div>
+
+                                <div>
+
+                                    <div class="role-title">
+                                        Department Manager
+                                    </div>
+
+                                    <div class="role-desc">
+                                        Team attendance & leave
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="role-count"
+                                 id="roleCountDepartment">
+                                0 users
+                            </div>
+
+                        </div>
+
+
+                        <div class="role-item">
+
+                            <div class="role-info">
+
+                                <div class="role-dot"></div>
+
+                                <div>
+
+                                    <div class="role-title">
+                                        General Staff
+                                    </div>
+
+                                    <div class="role-desc">
+                                        Employee-level access
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="role-count"
+                                 id="roleCountStaff">
+                                0 users
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BACKUP -->
+
+                <div class="panel-box"
+                     style="margin-top:24px;">
+
+                    <div class="panel-header">
+
+                        <div class="panel-title">
+                            System backup & recovery
+                        </div>
+
+                    </div>
+
+                    <div class="backup-status-box">
+
+                        <i class="fa-solid fa-rotate"></i>
+
+                        <span id="backupTimestamp">
+                            Last local snapshot : Today, 06:00
+                        </span>
+
+                    </div>
+
+                    <button class="btn-backup"
+                            onclick="alert('System snapshot backup initialized successfully.')">
+
+                        Backup now
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================================
+     ADD / EDIT USER MODAL
+========================================================= -->
+
+<div class="modal" id="actionModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header"
+             id="modalTitle">
+            Add New User
+        </div>
+
+        <div class="modal-subtext"
+             id="modalSubtext">
+            Create a new user profile and allocate workforce roles.
+        </div>
+
+
+        <div id="modalFormContainer">
+
+            <!-- USERNAME -->
+
+            <div class="form-group">
+
+                <label>
+                    Full Name / Username
+                </label>
+
+                <input type="text"
+                       id="newUserName"
+                       class="form-control"
+                       placeholder="e.g. John Doe">
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+
+                <label>
+                    Email
+                </label>
+
+                <input type="email"
+                       id="newUserEmail"
+                       class="form-control"
+                       placeholder="john.d@goldenpalm.lk">
+
+            </div>
+
+
+            <!-- ROLE -->
+
+            <div class="form-group">
+
+                <label>
+                    Role
+                </label>
+
+                <select id="newUserRole"
+                        class="form-control">
+
+                    <option value="IT Admin">
+                        IT Admin
+                    </option>
+
+                    <option value="HR Manager">
+                        HR Manager
+                    </option>
+
+                    <option value="Finance Manager">
+                        Finance Manager
+                    </option>
+
+                    <option value="Department Manager">
+                        Department Manager
+                    </option>
+
+                    <option value="General Staff">
+                        General Staff
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- EMPLOYEE LINK -->
+
+            <div class="form-group">
+
+                <label>
+                    Link to Employee
+                </label>
+
+                <select id="newUserEmployee"
+                        class="form-control">
+
+                    <option value="">
+                        No linked employee
+                    </option>
+
+                </select>
+
+                <div class="employee-help">
+                    Link this account to an existing employee record.
+                    Employee records are shared with Attendance, Leave,
+                    Payroll and Performance.
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button class="btn-cancel"
+                    onclick="closeModal()">
+
+                Cancel
+
+            </button>
+
+            <button class="btn-confirm"
+                    id="modalSubmitBtn"
+                    onclick="handleModalSubmit()">
+
+                Save User
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     AUDIT LOG MODAL
+========================================================= -->
+
+<div class="modal" id="auditModal">
+
+    <div class="modal-content"
+         style="width: 720px; max-width: 95%;">
+
+        <div class="modal-header">
+            System Audit Logs
+        </div>
+
+        <div class="modal-subtext">
+            Recent administrative actions recorded in the database trail.
+        </div>
+
+
+        <div style="max-height: 380px;
+                    overflow-y: auto;
+                    border: 1px solid var(--border-color);
+                    border-radius: 6px;">
+
+            <table class="data-table"
+                   id="auditTable"
+                   style="margin: 0;">
+
+                <thead>
+
+                <tr>
+
+                    <th>LOG ID</th>
+                    <th>USER ID</th>
+                    <th>ACTION DESCRIPTION</th>
+                    <th>TIMESTAMP</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody id="auditTableBody">
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button class="btn-cancel"
+                    onclick="closeAuditModal()">
+
+                Close
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =========================================================
+       GLOBAL STATE
+    ========================================================= */
+
+    let currentModalMode = 'CREATE';
+
+    let editingUserId = null;
+
+    let usersList = [];
+
+    let employeeList = [];
+
+    /*
+     * Map:
+     * UserID -> Employee
+     *
+     * Built from the Employees endpoint because the database
+     * relationship is Employees.UserID -> UserAccounts.UserID.
+     */
+    let userEmployeeMap = {};
+
+
+    /* =========================================================
+       PAGE INITIALIZATION
+    ========================================================= */
+
+    document.addEventListener("DOMContentLoaded", async function () {
+
+        await loadEmployees();
+
+        await loadUsers();
+
+    });
+
+
+    /* =========================================================
+       PROFILE DROPDOWN
+    ========================================================= */
+
+    function toggleProfileDropdown(event) {
+
+        event.stopPropagation();
+
+        const dropdown =
+            document.getElementById('profileDropdown');
+
+        dropdown.classList.toggle('show');
+    }
+
+
+    window.addEventListener('click', function () {
+
+        const dropdown =
+            document.getElementById('profileDropdown');
+
+        if (dropdown &&
+            dropdown.classList.contains('show')) {
+
+            dropdown.classList.remove('show');
+        }
+
+    });
+
+
+    /* =========================================================
+       LOGOUT
+    ========================================================= */
+
+    function handleLogout(event) {
+
+        event.preventDefault();
+
+        if (confirm('Are you sure you want to log out?')) {
+
+            sessionStorage.clear();
+
+            window.location.href = 'login.html';
+        }
+    }
+
+
+    /* =========================================================
+       LOAD EMPLOYEES
+    ========================================================= */
+
+    async function loadEmployees() {
+
+        try {
+
+            const response =
+                await fetch('/api/employees', {
+                    credentials: 'include'
+                });
+
+            if (!response.ok) {
+
+                throw new Error(
+                    `Employee request failed with status ${response.status}`
+                );
+            }
+
+            employeeList =
+                await response.json();
+
+            userEmployeeMap = {};
+
+            /*
+             * Build employee -> user mapping.
+             *
+             * Employees.UserID is the actual FK relationship.
+             */
+            employeeList.forEach(employee => {
+
+                if (employee.userId !== null &&
+                    employee.userId !== undefined) {
+
+                    userEmployeeMap[employee.userId] =
+                        employee;
+                }
+
+            });
+
+            populateEmployeeDropdown();
+
+        } catch (error) {
+
+            console.error(
+                "Failed to load employees:",
+                error
+            );
+
+            employeeList = [];
+
+            userEmployeeMap = {};
+
+            populateEmployeeDropdown();
+
+        }
+
+    }
+
+
+    /* =========================================================
+       POPULATE EMPLOYEE DROPDOWN
+    ========================================================= */
+
+    function populateEmployeeDropdown() {
+
+        const select =
+            document.getElementById('newUserEmployee');
+
+        if (!select) return;
+
+        select.innerHTML = '';
+
+        const noEmployeeOption =
+            document.createElement('option');
+
+        noEmployeeOption.value = '';
+
+        noEmployeeOption.textContent =
+            'No linked employee';
+
+        select.appendChild(noEmployeeOption);
+
+
+        employeeList.forEach(employee => {
+
+            /*
+             * Only active employees should normally receive
+             * new user accounts.
+             *
+             * Existing inactive employees remain visible
+             * if they are already linked.
+             */
+            const option =
+                document.createElement('option');
+
+            option.value =
+                employee.employeeId;
+
+            const employeeCode =
+                employee.employeeCode
+                    ? employee.employeeCode
+                    : `EMP-${employee.employeeId}`;
+
+            option.textContent =
+                `${employee.fullName} (${employeeCode})`;
+
+            select.appendChild(option);
+
+        });
+
+    }
+
+
+    /* =========================================================
+       ADD USER MODAL
+    ========================================================= */
+
+    function openAddUserModal() {
+
+        currentModalMode = 'CREATE';
+
+        editingUserId = null;
+
+        document.getElementById('modalTitle').innerText =
+            "Add New User";
+
+        document.getElementById('modalSubtext').innerText =
+            "Create a new user profile and link it to an existing employee.";
+
+        document.getElementById('modalFormContainer').style.display =
+            "block";
+
+        document.getElementById('newUserName').value =
+            "";
+
+        document.getElementById('newUserEmail').value =
+            "";
+
+        document.getElementById('newUserRole').value =
+            "General Staff";
+
+        document.getElementById('newUserEmployee').value =
+            "";
+
+        document.getElementById('modalSubmitBtn').innerText =
+            "Save User";
+
+        document.getElementById('actionModal').style.display =
+            "flex";
+    }
+
+
+    /* =========================================================
+       EDIT USER MODAL
+    ========================================================= */
+
+    function openEditUserModal(
+        id,
+        username,
+        email,
+        role
+    ) {
+
+        currentModalMode = 'EDIT';
+
+        editingUserId = id;
+
+        document.getElementById('modalTitle').innerText =
+            "Edit User";
+
+        document.getElementById('modalSubtext').innerText =
+            "Update user details, role and employee association.";
+
+        document.getElementById('modalFormContainer').style.display =
+            "block";
+
+        document.getElementById('newUserName').value =
+            username || "";
+
+        document.getElementById('newUserEmail').value =
+            email === '—' ? '' : (email || "");
+
+        /*
+         * Correct old "Staff" values to the actual database role.
+         */
+        if (role === "Staff") {
+            role = "General Staff";
+        }
+
+        document.getElementById('newUserRole').value =
+            role || "General Staff";
+
+
+        /*
+         * Find employee currently linked to this UserID.
+         */
+        const linkedEmployee =
+            userEmployeeMap[id];
+
+        const employeeSelect =
+            document.getElementById('newUserEmployee');
+
+        if (linkedEmployee) {
+
+            employeeSelect.value =
+                linkedEmployee.employeeId;
+
+        } else {
+
+            employeeSelect.value =
+                "";
+
+        }
+
+
+        document.getElementById('modalSubmitBtn').innerText =
+            "Update User";
+
+        document.getElementById('actionModal').style.display =
+            "flex";
+    }
+
+
+    /* =========================================================
+       CLOSE MODAL
+    ========================================================= */
+
+    function closeModal() {
+
+        document.getElementById('actionModal').style.display =
+            "none";
+    }
+
+
+    /* =========================================================
+       MODAL SUBMIT
+    ========================================================= */
+
+    function handleModalSubmit() {
+
+        if (currentModalMode === 'CREATE' ||
+            currentModalMode === 'EDIT') {
+
+            saveUser();
+
+        } else {
+
+            closeModal();
+        }
+
+    }
+
+
+    /* =========================================================
+       INITIALS
+    ========================================================= */
+
+    function getInitials(name) {
+
+        if (!name) return "US";
+
+        return name
+            .split(' ')
+            .filter(Boolean)
+            .map(n => n[0])
+            .join('')
+            .toUpperCase()
+            .substring(0, 2);
+    }
+
+
+    /* =========================================================
+       ESCAPE HTML
+       Prevents user-entered values from becoming HTML.
+    ========================================================= */
+
+    function escapeHtml(value) {
+
+        if (value === null ||
+            value === undefined) {
+
+            return "";
+        }
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    /* =========================================================
+       LOAD USERS
+    ========================================================= */
+
+    async function loadUsers() {
+
+        const tableBody =
+            document.querySelector("#usersTable tbody");
+
+        if (!tableBody) return;
+
+        try {
+
+            const response =
+                await fetch('/api/users', {
+                    credentials: 'include'
+                });
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                throw new Error(
+                    `Server status ${response.status}: ${errorText}`
+                );
+            }
+
+            usersList =
+                await response.json();
+
+            tableBody.innerHTML = "";
+
+            let activeCount = 0;
+
+            let inactiveCount = 0;
+
+
+            if (!usersList ||
+                usersList.length === 0) {
+
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7"
+                            style="text-align:center; padding:20px;">
+                            No users found in database.
+                        </td>
+                    </tr>
+                `;
+
+                updateStatCards(0, 0, 0);
+
+                updateRoleCounts([]);
+
+                return;
+            }
+
+
+            usersList.forEach((u, idx) => {
+
+                const userId =
+                    u.userId;
+
+                const username =
+                    u.username || 'User';
+
+                const email =
+                    u.email || '—';
+
+                let role =
+                    u.role || 'General Staff';
+
+                if (role === "Staff") {
+                    role = "General Staff";
+                }
+
+                const status =
+                    u.status || 'Active';
+
+                const initials =
+                    getInitials(username);
+
+                const badgeClass =
+                    status === 'Active'
+                        ? 'badge-active'
+                        : 'badge-inactive';
+
+
+                if (status === 'Active') {
+                    activeCount++;
+                } else {
+                    inactiveCount++;
+                }
+
+
+                const newStatus =
+                    status === 'Active'
+                        ? 'Inactive'
+                        : 'Active';
+
+                const toggleIcon =
+                    status === 'Active'
+                        ? 'fa-lock-open'
+                        : 'fa-lock';
+
+                const toggleTitle =
+                    status === 'Active'
+                        ? 'Deactivate Account'
+                        : 'Activate Account';
+
+
+                /*
+                 * Find employee linked to this user.
+                 */
+                const linkedEmployee =
+                    userEmployeeMap[userId];
+
+
+                let employeeHtml;
+
+                if (linkedEmployee) {
+
+                    const employeeCode =
+                        linkedEmployee.employeeCode
+                            ? linkedEmployee.employeeCode
+                            : `EMP-${linkedEmployee.employeeId}`;
+
+                    employeeHtml = `
+                        <div class="linked-employee">
+                            ${escapeHtml(linkedEmployee.fullName)}
+                            <div class="mono-text">
+                                ${escapeHtml(employeeCode)}
+                            </div>
+                        </div>
+                    `;
+
+                } else {
+
+                    employeeHtml = `
+                        <span class="linked-employee none">
+                            Not linked
+                        </span>
+                    `;
+                }
+
+
+                /*
+                 * LastLogin is not currently returned by
+                 * UserDAO.getAllUsers(), so don't display fake data.
+                 */
+                const lastLogin = "—";
+
+
+                const safeUsername =
+                    escapeHtml(username);
+
+                const safeEmail =
+                    escapeHtml(email);
+
+                const safeRole =
+                    escapeHtml(role);
+
+
+                const tr =
+                    document.createElement("tr");
+
+
+                tr.innerHTML = `
+
+                    <td>
+
+                        <div class="user-cell">
+
+                            <div class="user-avatar">
+                                ${escapeHtml(initials)}
+                            </div>
+
+                            <div class="user-details">
+
+                                <div class="name">
+                                    ${safeUsername}
+                                </div>
+
+                                <div class="sub">
+                                    Account ${escapeHtml(
+                    userId || (idx + 1)
+                )}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                    <td class="mono-text">
+                        ${safeEmail}
+                    </td>
+
+
+                    <td>
+                        ${employeeHtml}
+                    </td>
+
+
+                    <td style="color:#4b5563;">
+                        ${safeRole}
+                    </td>
+
+
+                    <td>
+
+                        <span class="badge ${badgeClass}">
+                            ${escapeHtml(status)}
+                        </span>
+
+                    </td>
+
+
+                    <td class="mono-text">
+                        ${lastLogin}
+                    </td>
+
+
+                    <td>
+
+                        <div class="action-btns">
+
+                            <i
+                                class="fa-solid ${toggleIcon} action-icon"
+                                title="${toggleTitle}"
+                                onclick="toggleUserStatus(
+                                    ${Number(userId)},
+                                    '${newStatus}'
+                                )">
+                            </i>
+
+
+                            <i
+                                class="fa-solid fa-key action-icon"
+                                title="Reset Password"
+                                onclick="resetUserPassword(
+                                    ${Number(userId)}
+                                )">
+                            </i>
+
+
+                            <i
+                                class="fa-regular fa-pen-to-square action-icon"
+                                title="Edit User"
+                                onclick="openEditUserModal(
+                                    ${Number(userId)},
+                                    '${escapeJs(username)}',
+                                    '${escapeJs(email)}',
+                                    '${escapeJs(role)}'
+                                )">
+                            </i>
+
+
+                            <i
+                                class="fa-regular fa-trash-can action-icon"
+                                title="Delete User"
+                                onclick="deleteUserFromDB(
+                                    ${Number(userId)}
+                                )">
+                            </i>
+
+                        </div>
+
+                    </td>
+                `;
+
+
+                tableBody.appendChild(tr);
+
+            });
+
+
+            updateStatCards(
+                usersList.length,
+                activeCount,
+                inactiveCount
+            );
+
+            updateRoleCounts(usersList);
+
+
+        } catch (err) {
+
+            console.error(err);
+
+            tableBody.innerHTML = `
+
+                <tr>
+
+                    <td colspan="7"
+                        style="
+                            text-align:center;
+                            color:#dc2626;
+                            padding:25px;
+                            background:#fef2f2;
+                        ">
+
+                        <strong>
+                            ⚠️ Failed to load users:
+                        </strong>
+
+                        ${escapeHtml(err.message)}
+
+                        <br>
+
+                        <span style="
+                            font-size:12px;
+                            color:#6b7280;
+                        ">
+
+                            Check if your Spring Boot backend
+                            is running and connected to SQL Server.
+
+                        </span>
+
+                    </td>
+
+                </tr>
+            `;
+        }
+
+    }
+
+
+    /* =========================================================
+       ESCAPE JAVASCRIPT STRING
+    ========================================================= */
+
+    function escapeJs(value) {
+
+        if (value === null ||
+            value === undefined) {
+
+            return "";
+        }
+
+        return String(value)
+            .replace(/\\/g, '\\\\')
+            .replace(/'/g, "\\'")
+            .replace(/\r/g, "\\r")
+            .replace(/\n/g, "\\n");
+    }
+
+
+    /* =========================================================
+       STAT CARDS
+    ========================================================= */
+
+    function updateStatCards(
+        total,
+        active,
+        inactive
+    ) {
+
+        document.getElementById('totalAccounts').innerText =
+            total;
+
+        document.getElementById('activeUsers').innerText =
+            active;
+
+        document.getElementById('inactiveUsers').innerText =
+            inactive;
+    }
+
+
+    /* =========================================================
+       ROLE COUNTS
+    ========================================================= */
+
+    function updateRoleCounts(users) {
+
+        const counts = {
+            "IT Admin": 0,
+            "HR Manager": 0,
+            "Finance Manager": 0,
+            "Department Manager": 0,
+            "General Staff": 0
+        };
+
+
+        users.forEach(user => {
+
+            let role =
+                user.role || "General Staff";
+
+            if (role === "Staff") {
+                role = "General Staff";
+            }
+
+            if (counts.hasOwnProperty(role)) {
+                counts[role]++;
+            }
+
+        });
+
+
+        document.getElementById('roleCountITAdmin').innerText =
+            `${counts["IT Admin"]} users`;
+
+        document.getElementById('roleCountHR').innerText =
+            `${counts["HR Manager"]} users`;
+
+        document.getElementById('roleCountFinance').innerText =
+            `${counts["Finance Manager"]} users`;
+
+        document.getElementById('roleCountDepartment').innerText =
+            `${counts["Department Manager"]} users`;
+
+        document.getElementById('roleCountStaff').innerText =
+            `${counts["General Staff"]} users`;
+    }
+
+
+    /* =========================================================
+       CREATE / UPDATE USER
+    ========================================================= */
+
+    async function saveUser() {
+
+        const username =
+            document.getElementById("newUserName")
+                .value
+                .trim();
+
+        const email =
+            document.getElementById("newUserEmail")
+                .value
+                .trim();
+
+        const role =
+            document.getElementById("newUserRole")
+                .value;
+
+        const employeeId =
+            document.getElementById("newUserEmployee")
+                .value;
+
+
+        /* -----------------------------
+           BASIC VALIDATION
+        ----------------------------- */
+
+        if (!username) {
+
+            alert("Please enter a username.");
+
+            return;
+        }
+
+
+        if (!email) {
+
+            alert("Please enter an email address.");
+
+            return;
+        }
+
+
+        if (!role) {
+
+            alert("Please select a role.");
+
+            return;
+        }
+
+
+        /*
+         * For CREATE, an employee link is recommended,
+         * but standalone accounts such as IT Admin can remain
+         * unlinked.
+         */
+        if (currentModalMode === 'CREATE' &&
+            !employeeId &&
+            role !== 'IT Admin') {
+
+            const proceed =
+                confirm(
+                    "This account will be created without a linked employee. " +
+                    "It will not be connected to an employee profile. " +
+                    "Do you want to continue?"
+                );
+
+            if (!proceed) {
+                return;
+            }
+        }
+
+
+        /* -----------------------------
+           CREATE / UPDATE PAYLOAD
+        ----------------------------- */
+
+        const payload = {
+
+            username: username,
+
+            email: email,
+
+            role: role,
+
+            status: "Active",
+
+            /*
+             * Existing backend expects a password during creation.
+             */
+            password: "DefaultPassword123"
+        };
+
+
+        const url =
+            currentModalMode === 'EDIT'
+                ? `/api/users/${editingUserId}`
+                : '/api/users';
+
+
+        const method =
+            currentModalMode === 'EDIT'
+                ? 'PUT'
+                : 'POST';
+
+
+        try {
+
+            const response =
+                await fetch(url, {
+
+                    method: method,
+
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    credentials: 'include',
+
+                    body:
+                        JSON.stringify(payload)
+                });
+
+
+            if (!response.ok) {
+
+                const errText =
+                    await response.text();
+
+                alert(
+                    "Failed to save user: " +
+                    errText
+                );
+
+                return;
+            }
+
+
+            /*
+             * CREATE:
+             *
+             * Current backend returns only a success message,
+             * not the new UserID.
+             *
+             * Therefore reload the users and identify the newly
+             * created account using username + email.
+             */
+            if (currentModalMode === 'CREATE') {
+
+                await loadEmployees();
+
+                await loadUsers();
+
+
+                if (employeeId) {
+
+                    const refreshedUser =
+                        usersList.find(user =>
+                            String(user.username || "")
+                                .toLowerCase() ===
+                            username.toLowerCase()
+                            &&
+                            String(user.email || "")
+                                .toLowerCase() ===
+                            email.toLowerCase()
+                        );
+
+
+                    if (!refreshedUser ||
+                        !refreshedUser.userId) {
+
+                        alert(
+                            "User was created, but the new UserID " +
+                            "could not be identified for employee linking."
+                        );
+
+                        closeModal();
+
+                        return;
+                    }
+
+
+                    await linkUserToEmployee(
+                        refreshedUser.userId,
+                        Number(employeeId)
+                    );
+
+                }
+
+            } else {
+
+                /*
+                 * EDIT:
+                 *
+                 * If an employee was selected, link the account
+                 * to that employee.
+                 *
+                 * We intentionally do not unlink when the user
+                 * selects "No linked employee" because there is
+                 * currently no unlink endpoint in UserController.
+                 */
+                if (employeeId) {
+
+                    await linkUserToEmployee(
+                        editingUserId,
+                        Number(employeeId)
+                    );
+                }
+
+            }
+
+
+            closeModal();
+
+            await loadEmployees();
+
+            await loadUsers();
+
+
+        } catch (err) {
+
+            console.error(err);
+
+            alert(
+                "Server request failed. " +
+                "Verify backend connection."
+            );
+        }
+
+    }
+
+
+    /* =========================================================
+       LINK USER TO EMPLOYEE
+    ========================================================= */
+
+    async function linkUserToEmployee(
+        userId,
+        employeeId
+    ) {
+
+        if (!userId || !employeeId) {
+
+            return false;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/users/${userId}/link-employee/${employeeId}`,
+                    {
+                        method: 'PUT',
+
+                        credentials: 'include'
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                alert(
+                    "User account was created/updated, " +
+                    "but employee linking failed:\n\n" +
+                    errorText
+                );
+
+                return false;
+            }
+
+
+            return true;
+
+
+        } catch (error) {
+
+            console.error(
+                "Employee linking error:",
+                error
+            );
+
+            alert(
+                "User account was saved, but the employee " +
+                "could not be linked."
+            );
+
+            return false;
+        }
+
+    }
+
+
+    /* =========================================================
+       TOGGLE STATUS
+    ========================================================= */
+
+    async function toggleUserStatus(
+        userId,
+        newStatus
+    ) {
+
+        if (!confirm(
+            `Are you sure you want to change this account status to ${newStatus}?`
+        )) {
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/users/${userId}/status`,
+                    {
+                        method: 'PUT',
+
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
+
+                        credentials: 'include',
+
+                        body:
+                            JSON.stringify({
+                                status: newStatus
+                            })
+                    }
+                );
+
+
+            if (response.ok) {
+
+                await loadUsers();
+
+            } else {
+
+                const err =
+                    await response.text();
+
+                alert(
+                    "Failed to update status: " +
+                    err
+                );
+            }
+
+
+        } catch (err) {
+
+            alert(
+                "Server connection error."
+            );
+        }
+
+    }
+
+
+    /* =========================================================
+       RESET PASSWORD
+    ========================================================= */
+
+    async function resetUserPassword(userId) {
+
+        if (!confirm(
+            "Are you sure you want to reset this user's password " +
+            "to the temporary default?"
+        )) {
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/users/${userId}/reset-password`,
+                    {
+                        method: 'PUT',
+                        credentials: 'include'
+                    }
+                );
+
+
+            if (response.ok) {
+
+                const data =
+                    await response.json();
+
+                alert(
+                    data.message ||
+                    "Password reset successfully!"
+                );
+
+
+            } else {
+
+                const err =
+                    await response.text();
+
+                alert(
+                    "Failed to reset password: " +
+                    err
+                );
+            }
+
+
+        } catch (err) {
+
+            alert(
+                "Server connection error during password reset."
+            );
+        }
+
+    }
+
+
+    /* =========================================================
+       DELETE USER
+    ========================================================= */
+
+    async function deleteUserFromDB(userId) {
+
+        if (!confirm(
+            "Are you sure you want to permanently delete this " +
+            "user account from the database?"
+        )) {
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/users/${userId}`,
+                    {
+                        method: 'DELETE',
+                        credentials: 'include'
+                    }
+                );
+
+
+            if (response.ok) {
+
+                await loadEmployees();
+
+                await loadUsers();
+
+            } else {
+
+                const err =
+                    await response.text();
+
+                alert(
+                    "Failed to delete user: " +
+                    err
+                );
+            }
+
+
+        } catch (err) {
+
+            alert(
+                "Server connection error during deletion."
+            );
+        }
+
+    }
+
+
+    /* =========================================================
+       AUDIT LOGS
+    ========================================================= */
+
+    async function openAuditLogsModal() {
+
+        try {
+
+            const response =
+                await fetch(
+                    '/api/audit-logs',
+                    {
+                        credentials: 'include'
+                    }
+                );
+
+
+            if (response.ok) {
+
+                const logs =
+                    await response.json();
+
+                const tbody =
+                    document.getElementById(
+                        'auditTableBody'
+                    );
+
+                tbody.innerHTML = '';
+
+
+                if (!logs ||
+                    logs.length === 0) {
+
+                    tbody.innerHTML = `
+
+                        <tr>
+
+                            <td colspan="4"
+                                style="
+                                    text-align:center;
+                                    padding:20px;
+                                ">
+
+                                No audit logs found.
+
+                            </td>
+
+                        </tr>
+                    `;
+
+                } else {
+
+                    logs.forEach(log => {
+
+                        const tr =
+                            document.createElement('tr');
+
+
+                        tr.innerHTML = `
+
+                            <td class="mono-text">
+                                ${escapeHtml(log.logId)}
+                            </td>
+
+                            <td class="mono-text">
+                                ${escapeHtml(log.userId)}
+                            </td>
+
+                            <td>
+                                ${escapeHtml(
+                            log.actionDescription
+                        )}
+                            </td>
+
+                            <td class="mono-text"
+                                style="font-size:11px;">
+
+                                ${log.logTimestamp
+                            ? new Date(
+                                log.logTimestamp
+                            ).toLocaleString()
+                            : '—'}
+
+                            </td>
+
+                        `;
+
+
+                        tbody.appendChild(tr);
+
+                    });
+
+                }
+
+
+                document.getElementById(
+                    'auditModal'
+                ).style.display = 'flex';
+
+
+            } else {
+
+                alert(
+                    'Failed to load audit logs from server.'
+                );
+            }
+
+
+        } catch (err) {
+
+            alert(
+                'Error connecting to server for audit logs: ' +
+                err.message
+            );
+        }
+
+    }
+
+
+    /* =========================================================
+       CLOSE AUDIT MODAL
+    ========================================================= */
+
+    function closeAuditModal() {
+
+        document.getElementById(
+            'auditModal'
+        ).style.display = 'none';
+    }
+
+
+    /* =========================================================
+       CLOSE MODALS WHEN CLICKING BACKDROP
+    ========================================================= */
+
+    window.addEventListener('click', function (event) {
+
+        const actionModal =
+            document.getElementById('actionModal');
+
+        const auditModal =
+            document.getElementById('auditModal');
+
+
+        if (event.target === actionModal) {
+
+            closeModal();
+        }
+
+
+        if (event.target === auditModal) {
+
+            closeAuditModal();
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

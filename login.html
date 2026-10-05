@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Hotel Workforce Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    <style>
+        :root {
+            --bg-main: #f7f5ef;
+            --sidebar-bg: #1c222b;
+            --gold-primary: #d4a038;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #f0ebd9;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg-main);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 420px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .logo-box {
+            background-color: var(--gold-primary);
+            color: #fff;
+            font-weight: 800;
+            font-size: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .brand-subtitle {
+            color: var(--gold-primary);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background-color: #faf9f5;
+        }
+
+        .form-control:focus {
+            border-color: var(--gold-primary);
+            background-color: #ffffff;
+        }
+
+        select.form-control {
+            padding-left: 40px;
+            cursor: pointer;
+        }
+
+        .btn-login {
+            width: 100%;
+            background-color: var(--gold-primary);
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(212, 160, 56, 0.2);
+            transition: opacity 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover { opacity: 0.95; }
+
+        .footer-note {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="brand-header">
+        <div class="logo-box">GP</div>
+        <div class="brand-title">Golden Palm HR Portal</div>
+        <div class="brand-subtitle">Internal Access Only</div>
+    </div>
+
+    <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+            <label>System Role</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-user-shield"></i>
+                <select class="form-control" id="userRole" required>
+                    <option value="System Admin">System Administrator</option>
+                    <option value="Admin">Admin</option>
+                    <option value="HR Manager">HR Manager</option>
+                    <option value="Finance Manager">Finance Manager</option>
+                    <option value="Department Manager">Department Manager</option>
+                    <option value="Staff">Staff / Employee</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Username / Email</label>
+            <div class="input-wrapper">
+                <i class="fa-regular fa-user"></i>
+                <input type="text" class="form-control" id="loginUsername" placeholder="Enter username or email" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" class="form-control" id="loginPassword" placeholder="Enter password" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-login">Sign In to Workspace</button>
+    </form>
+
+    <div class="footer-note">
+        Need account access? Contact HR Systems Administrator.
+    </div>
+</div>
+
+<script>
+    async function handleLogin(e) {
+        e.preventDefault();
+
+        const usernameInput = document.getElementById('loginUsername');
+        const passwordInput = document.getElementById('loginPassword');
+        const roleSelect = document.getElementById('userRole');
+
+        const payload = {
+            username: usernameInput ? usernameInput.value.trim() : '',
+            password: passwordInput ? passwordInput.value.trim() : ''
+        };
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                sessionStorage.setItem("loggedInUser", data.username || usernameInput.value.trim());
+                sessionStorage.setItem("userRole", data.role || roleSelect.value);
+
+                // Redirect directly to Dashboard for all roles
+                window.location.href = "index.html";
+            } else {
+                const errorMsg = await response.text();
+                alert("Login failed: " + errorMsg);
+            }
+        } catch (err) {
+            alert("Server connection failed. Please ensure the Spring Boot backend is running.");
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="auth-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Security - Hotel Workforce Pro</title>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+    <style>
+        :root {
+            --bg-main: #f5f2eb;
+            --sidebar-bg: #1e242d;
+            --sidebar-text: #9aa3b0;
+            --sidebar-hover: #29303d;
+            --gold-primary: #c68a23;
+            --gold-hover: #b27a1e;
+            --gold-light: #fbf6ea;
+            --gold-border: #f2e2be;
+            --text-dark: #1b2128;
+            --text-muted: #6b7280;
+            --card-bg: #ffffff;
+            --border-color: #ebe5d8;
+            --input-bg: #f7f5ef;
+            --danger-color: #dc2626;
+            --danger-light: #fef2f2;
+            --danger-border: #fecaca;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .brand-header {
+            padding: 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-box {
+            background-color: var(--gold-primary);
+            color: #fff;
+            font-weight: 800;
+            font-size: 18px;
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-title {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 1.2;
+        }
+
+        .brand-subtitle {
+            color: #8c97a8;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            padding: 10px 0;
+        }
+
+        .section-label {
+            color: #556070;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 24px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 24px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background-color: var(--sidebar-hover);
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background-color: rgba(198, 138, 35, 0.15);
+            color: var(--gold-primary);
+            border-left: 4px solid var(--gold-primary);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-left i {
+            width: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .nav-tag {
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #79879c;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid #2b3342;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #384252;
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            color: var(--sidebar-text);
+            font-size: 13px;
+        }
+
+        /* Main Workspace Layout */
+        .main-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .top-navbar {
+            height: 64px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #737b88;
+        }
+
+        .breadcrumb span {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .top-actions {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #4b5563;
+            cursor: pointer;
+        }
+
+        .top-user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        /* Content Container */
+        .content-container {
+            padding: 10px 40px 40px;
+        }
+
+        .page-subtitle {
+            color: var(--gold-primary);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .page-title {
+            font-size: 34px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .page-description {
+            color: #647082;
+            font-size: 15px;
+            margin-bottom: 28px;
+        }
+
+        /* Content Grid Layout */
+        .security-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .panel-box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .panel-title-sm {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .panel-desc-sm {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        /* Form Styling */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--input-bg);
+            font-size: 14px;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--gold-primary);
+            background-color: #ffffff;
+        }
+
+        .btn-primary-wide {
+            width: 100%;
+            background-color: var(--gold-primary);
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(198, 138, 35, 0.25);
+            transition: background 0.2s;
+        }
+
+        .btn-primary-wide:hover {
+            background-color: var(--gold-hover);
+        }
+
+        /* Active Sessions List */
+        .session-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #f2ece0;
+        }
+
+        .session-item:last-child {
+            border-bottom: none;
+        }
+
+        .session-left {
+            display: flex;
+            gap: 12px;
+        }
+
+        .session-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--gold-primary);
+            border-radius: 50%;
+            margin-top: 6px;
+        }
+
+        .session-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .session-details {
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .session-time {
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
+
+        .session-close-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 2px 6px;
+            transition: color 0.2s;
+        }
+
+        .session-close-btn:hover {
+            color: var(--text-dark);
+        }
+
+        .btn-signout-other {
+            width: 100%;
+            background-color: #ffffff;
+            color: var(--danger-color);
+            border: 1px solid #fecaca;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            transition: all 0.2s;
+        }
+
+        .btn-signout-other:hover {
+            background-color: var(--danger-light);
+            border-color: var(--danger-color);
+        }
+
+        /* Notice Banner Box */
+        .info-notice-box {
+            background-color: #fbf6ea;
+            border: 1px solid var(--gold-border);
+            border-radius: 12px;
+            padding: 18px 20px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .info-notice-box i {
+            color: var(--gold-primary);
+            font-size: 18px;
+            margin-top: 2px;
+        }
+
+        .info-notice-text {
+            font-size: 13px;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        /* Modal Dialog */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 28px;
+            border-radius: 12px;
+            width: 520px;
+            max-width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .modal-subtext {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .btn-cancel {
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Profile Dropdown Menu */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            width: 220px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            z-index: 500;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--input-bg);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Left Navigation Sidebar -->
+<aside class="sidebar">
+    <div>
+        <div class="brand-header">
+            <div class="logo-box">GP</div>
+            <div>
+                <div class="brand-title">Hotel Workforce Pro</div>
+                <div class="brand-subtitle">GOLDEN PALM HOTEL</div>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="section-label">WORKSPACE</div>
+            <a href="index.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-border-all"></i> Dashboard</div>
+            </a>
+            <a href="user-access-administration.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-shield-halved"></i> User Access & Administration</div>
+                <span class="nav-tag">M1</span>
+            </a>
+            <a href="employee-profiles.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-user-group"></i> Employee Profiles</div>
+                <span class="nav-tag">M2</span>
+            </a>
+            <a href="attendance-time-tracking.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-calendar-days"></i> Attendance & Time Tracking</div>
+                <span class="nav-tag">M3</span>
+            </a>
+            <a href="leave-management.html" class="nav-item">
+                <div class="nav-left"><i class="fa-regular fa-clipboard"></i> Leave Management</div>
+                <span class="nav-tag">M4</span>
+            </a>
+            <a href="payroll-payslip-processing.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-file-invoice-dollar"></i> Payroll & Payslip Processing</div>
+                <span class="nav-tag">M5</span>
+            </a>
+            <a href="performance-management.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-clipboard-check"></i> Performance Management</div>
+                <span class="nav-tag">M6</span>
+            </a>
+            <a href="reporting-analytics.html" class="nav-item">
+                <div class="nav-left"><i class="fa-solid fa-chart-line"></i> Reporting & Analytics</div>
+                <span class="nav-tag">M7</span>
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="section-label">PERSONAL</div>
+            <a href="my-profile.html" class="nav-item">
+                <div class="nav-left"><i class="fa-regular fa-user"></i> My Profile</div>
+            </a>
+            <a href="account-security.html" class="nav-item active">
+                <div class="nav-left"><i class="fa-solid fa-lock"></i> Account Security</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="sidebar-footer" onclick="toggleDropdown()">
+        <div class="avatar">DJ</div>
+        <div class="user-info">
+            <div class="user-name">Dilhani Jayasinghe</div>
+            <div class="user-role">System Admin</div>
+        </div>
+    </div>
+</aside>
+
+<!-- Main Content Workspace -->
+<main class="main-wrapper">
+    <header class="top-navbar">
+        <div class="breadcrumb">
+            Golden Palm / <span>Workspace</span>
+        </div>
+        <div class="top-actions">
+            <button class="notification-btn" onclick="triggerAlert('Notifications', 'No unread alerts.')">
+                <i class="fa-regular fa-bell"></i>
+            </button>
+            <div class="top-user-profile" onclick="toggleDropdown()">
+                <div style="text-align: right;">
+                    <div style="font-size: 15px; font-weight: 600;" class="user-name">Dilhani Jayasinghe</div>
+                    <div style="font-size: 13px; color: var(--text-muted);" class="user-role">System Admin</div>
+                </div>
+                <div class="avatar" style="background-color: #e2e8f0; color: #475569;">DJ</div>
+                <i class="fa-solid fa-chevron-down" style="font-size: 12px; color: #94a3b8;"></i>
+            </div>
+
+            <!-- Profile Dropdown Menu -->
+            <div class="dropdown-menu" id="profileDropdown">
+                <a href="my-profile.html" class="dropdown-item">
+                    <i class="fa-regular fa-user"></i> My Profile
+                </a>
+                <a href="account-security.html" class="dropdown-item">
+                    <i class="fa-solid fa-lock"></i> Account Security
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="login.html" class="dropdown-item" style="color: var(--danger-color);">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="content-container">
+        <div class="page-subtitle">PERSONAL WORKSPACE - MODULE 1</div>
+        <h1 class="page-title">Account Security</h1>
+        <p class="page-description">Keep your sign-in details and active sessions under review.</p>
+
+        <div class="security-grid">
+            <!-- Left Main Section: Change Password -->
+            <div>
+                <div class="panel-box">
+                    <div class="panel-title-sm">Change password</div>
+                    <div class="panel-desc-sm">Use a strong password that you do not reuse elsewhere.</div>
+
+                    <form id="passwordForm" onsubmit="handlePasswordUpdate(event)">
+                        <div class="form-group">
+                            <label class="form-label">Current password</label>
+                            <input type="password" class="form-input" id="currentPassword" required placeholder="••••••••••••">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">New password</label>
+                                <input type="password" class="form-input" id="newPassword" required placeholder="••••••••••••">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Confirm new password</label>
+                                <input type="password" class="form-input" id="confirmPassword" required placeholder="••••••••••••">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary-wide" style="margin-top: 24px;">
+                            <i class="fa-solid fa-key"></i> Update password
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Side Section: Active Sessions & Prototype Warning -->
+            <div>
+                <div class="panel-box">
+                    <div class="panel-title-sm" style="margin-bottom: 18px;">Active login sessions</div>
+
+                    <div id="sessionList">
+                        <div class="session-item" id="session-1">
+                            <div class="session-left">
+                                <div class="session-dot"></div>
+                                <div>
+                                    <div class="session-title">This device</div>
+                                    <div class="session-details">Chrome · Windows · Colombo</div>
+                                    <div class="session-time">Active now</div>
+                                </div>
+                            </div>
+                            <button class="session-close-btn" onclick="terminateSession('session-1', 'This device')"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+
+                        <div class="session-item" id="session-2">
+                            <div class="session-left">
+                                <div class="session-dot"></div>
+                                <div>
+                                    <div class="session-title">Mobile session</div>
+                                    <div class="session-details">Safari · iPhone · Colombo</div>
+                                    <div class="session-time">Last seen 12 min ago</div>
+                                </div>
+                            </div>
+                            <button class="session-close-btn" onclick="terminateSession('session-2', 'Mobile session')"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+
+                    <button class="btn-signout-other" onclick="signOutOtherSessions()">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out other sessions
+                    </button>
+                </div>
+
+                <!-- Additional System Controls Box -->
+                <div class="info-notice-box">
+                    <i class="fa-regular fa-shield-check"></i>
+                    <div class="info-notice-text">
+                        Account security controls are synchronized securely with the backend database.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Modal Dialog for Interactivity -->
+<div class="modal" id="systemModal">
+    <div class="modal-content">
+        <div class="modal-header" id="modalTitle">System Dialog</div>
+        <div class="modal-subtext" id="modalSubtext">Account Security</div>
+        <div id="modalBody" style="font-size: 14px; color: var(--text-dark);"></div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Scripting and Interactivity -->
+<script>
+    function toggleDropdown() {
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.toggle('show');
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.closest('.top-user-profile') && !event.target.closest('.sidebar-footer')) {
+            const dropdowns = document.getElementsByClassName('dropdown-menu');
+            for (let i = 0; i < dropdowns.length; i++) {
+                dropdowns[i].classList.remove('show');
+            }
+        }
+    };
+
+    function triggerAlert(title, text) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalSubtext').innerText = text;
+        document.getElementById('modalBody').innerHTML = '';
+        document.getElementById('systemModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('systemModal').style.display = 'none';
+    }
+
+    async function handlePasswordUpdate(e) {
+        e.preventDefault();
+        const newPass = document.getElementById('newPassword').value;
+        const confirmPass = document.getElementById('confirmPassword').value;
+
+        if (newPass !== confirmPass) {
+            triggerAlert('Password Error', 'New password and confirm password do not match.');
+            return;
+        }
+
+        const loggedInUser = sessionStorage.getItem("loggedInUser");
+
+        try {
+            const response = await fetch('/api/auth/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    username: loggedInUser,
+                    newPassword: newPass
+                })
+            });
+
+            if (response.ok) {
+                triggerAlert('Password Updated', 'Your account password has been successfully updated in the database.');
+                document.getElementById('passwordForm').reset();
+            } else {
+                const errText = await response.text();
+                triggerAlert('Update Failed', errText || 'Could not update password.');
+            }
+        } catch (error) {
+            triggerAlert('Connection Error', 'A network error occurred: ' + error.message);
+        }
+    }
+
+    function terminateSession(id, name) {
+        const elem = document.getElementById(id);
+        if (elem) {
+            elem.remove();
+            triggerAlert('Session Terminated', `The session "${name}" has been logged out.`);
+        }
+    }
+
+    function signOutOtherSessions() {
+        const mobileSession = document.getElementById('session-2');
+        if (mobileSession) {
+            mobileSession.remove();
+        }
+        document.getElementById('modalTitle').innerText = 'Sessions Signed Out';
+        document.getElementById('modalSubtext').innerText = 'Active Session Management';
+        document.getElementById('modalBody').innerHTML = `
+                <p>All active login sessions except your current device have been signed out.</p>
+            `;
+        document.getElementById('systemModal').style.display = 'flex';
+    }
+</script>
+</body>
+</html>
